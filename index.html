@@ -1153,6 +1153,11 @@
 
 
     function showMBTIResult(mbti) {
+      if (!mbti) {
+        console.warn("showMBTIResult: mbti is null, using fallback");
+        mbti = predictMBTI();
+      }
+
       const resultEl =
         document.getElementById("mbtiResult");
       const typeEl =
@@ -2273,7 +2278,11 @@
 
         await runRoulette(finalMBTI);
 
-        showMBTIResult(finalMBTI);
+        if (finalMBTI) {
+          showMBTIResult(finalMBTI);
+        } else {
+          showMBTIResult(predictMBTI());
+        }
 
       }
 
