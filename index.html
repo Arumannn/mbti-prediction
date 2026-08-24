@@ -12,7 +12,7 @@
     body {
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background: linear-gradient(135deg, #16162a 0%, #1a1a2e 50%, #1e1e3a 100%);
       color: #fff;
       overflow-x: hidden;
     }
@@ -43,7 +43,7 @@
       font-size: 36px;
       font-weight: 700;
       margin-bottom: 10px;
-      background: linear-gradient(90deg, #a855f7, #6366f1, #3b82f6);
+      background: linear-gradient(90deg, #8b5cf6, #6940c5);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -82,17 +82,17 @@
       font-size: 18px;
       font-weight: 600;
       color: #fff;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
+      background: linear-gradient(135deg, #8b5cf6, #6940c5);
       border: none;
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+      box-shadow: 0 4px 20px rgba(139,92,246,0.4);
     }
 
     .start-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 30px rgba(168,85,247,0.6);
+      box-shadow: 0 6px 30px rgba(139,92,246,0.6);
     }
 
     .start-btn:disabled {
@@ -143,16 +143,18 @@
       position: absolute;
       font-size: 11px;
       font-weight: 700;
-      color: #a855f7;
-      text-shadow: 0 0 10px rgba(168,85,247,0.5);
+      color: #8b5cf6;
+      text-shadow: 0 0 10px rgba(139,92,246,0.5);
       width: 36px;
       text-align: center;
+      transition: all 0.15s ease;
     }
 
     .roulette-type.active {
-      color: #facc15;
-      text-shadow: 0 0 15px rgba(250,204,21,0.8);
+      color: #f0b232 !important;
+      text-shadow: 0 0 20px rgba(240,178,50,0.9) !important;
       font-size: 13px;
+      transform: scale(1.2);
     }
 
     /* Camera circle */
@@ -162,8 +164,8 @@
       height: 300px;
       border-radius: 50%;
       overflow: hidden;
-      border: 3px solid rgba(168,85,247,0.5);
-      box-shadow: 0 0 40px rgba(168,85,247,0.3), inset 0 0 40px rgba(0,0,0,0.3);
+      border: 3px solid rgba(139,92,246,0.5);
+      box-shadow: 0 0 40px rgba(139,92,246,0.3), inset 0 0 40px rgba(0,0,0,0.3);
       z-index: 10;
     }
 
@@ -188,7 +190,7 @@
       position: absolute;
       left: 0; right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, #a855f7, transparent);
+      background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
       opacity: 0;
       animation: scan 2.5s ease-in-out infinite;
     }
@@ -212,9 +214,9 @@
       align-items: center;
       gap: 8px;
       padding: 10px 24px;
-      background: rgba(168,85,247,0.2);
+      background: rgba(139,92,246,0.2);
       border-radius: 30px;
-      border: 1px solid rgba(168,85,247,0.4);
+      border: 1px solid rgba(139,92,246,0.4);
       margin-bottom: 12px;
     }
 
@@ -262,11 +264,11 @@
     }
 
     .countdown-ring .bg {
-      stroke: rgba(168,85,247,0.2);
+      stroke: rgba(139,92,246,0.2);
     }
 
     .countdown-ring .progress {
-      stroke: #a855f7;
+      stroke: #8b5cf6;
       stroke-dasharray: 88;
       stroke-dashoffset: 0;
       stroke-linecap: round;
@@ -280,7 +282,7 @@
       transform: translate(-50%, -50%);
       font-size: 13px;
       font-weight: 700;
-      color: #a855f7;
+      color: #8b5cf6;
     }
 
     .countdown-label {
@@ -303,13 +305,110 @@
 
     #faceCanvas, #captureCanvas { display: none; }
 
+    /* ===== MBTI RESULT ===== */
+    #mbtiResult {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #16162a 0%, #1a1a2e 50%, #1e1e3a 100%);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    #mbtiResult.show {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .result-avatar {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      border: 4px solid;
+      box-shadow: 0 0 60px currentColor;
+      animation: floatAvatar 3s ease-in-out infinite;
+    }
+
+    @keyframes floatAvatar {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .result-avatar img {
+      width: 140px;
+      height: 140px;
+    }
+
+    .result-type {
+      font-size: 72px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+    }
+
+    .result-role {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      padding: 6px 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .result-name {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #e2e8f0;
+    }
+
+    .result-desc {
+      font-size: 15px;
+      color: #94a3b8;
+      max-width: 500px;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .result-traits {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .result-traits span {
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid;
+    }
+
+    .result-footer {
+      font-size: 12px;
+      color: #64748b;
+    }
+
     @media (max-width: 420px) {
-      .roulette-wrapper { width: 320px; height: 320px; }
-      .roulette-ring { width: 320px; height: 320px; }
-      .camera-circle { width: 250px; height: 250px; }
-      h1 { font-size: 28px; }
-      .features { flex-direction: column; width: 100%; }
-      .feature { width: 100%; justify-content: center; }
+      .result-type { font-size: 56px; }
+      .result-avatar { width: 140px; height: 140px; }
+      .result-avatar img { width: 110px; height: 110px; }
     }
   </style>
 </head>
@@ -368,12 +467,56 @@
     </div>
   </div>
 
+  <!-- MBTI Result Overlay -->
+  <div id="mbtiResult">
+    <div class="result-avatar" id="resultAvatar">
+      <img id="resultAvatarImg" src="" alt="Avatar">
+    </div>
+    <div class="result-type" id="resultType"></div>
+    <div class="result-role" id="resultRole"></div>
+    <div class="result-name" id="resultName"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="result-traits" id="resultTraits"></div>
+    <div class="result-footer">Dianalisis menggunakan AI Face Detection</div>
+  </div>
+
   <canvas id="faceCanvas"></canvas>
   <canvas id="captureCanvas"></canvas>
 
   <script>
     // ===== CONFIG =====
+    // MBTI group colors matching 16personalities.com
+    const MBTI_COLORS = {
+      // Analysts - Purple
+      INTJ: "#6940c5", INTP: "#6940c5", ENTJ: "#6940c5", ENTP: "#6940c5",
+      // Diplomats - Green
+      INFJ: "#43b581", INFP: "#43b581", ENFJ: "#43b581", ENFP: "#43b581",
+      // Sentinels - Blue
+      ISTJ: "#3ba676", ISFJ: "#3ba676", ESTJ: "#3ba676", ESFJ: "#3ba676",
+      // Explorers - Yellow
+      ISTP: "#f0b232", ISFP: "#f0b232", ESTP: "#f0b232", ESFP: "#f0b232"
+    };
+
     const MBTI_TYPES = ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
+
+    const MBTI_DATA = {
+      INTJ: { name: "The Architect", role: "Analyst", desc: "Imaginative and strategic thinkers, with a plan for everything.", traits: ["Strategic", "Independent", "Determined"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/intj-architect-male.svg" },
+      INTP: { name: "The Logician", role: "Analyst", desc: "Innovative inventors with an unquenchable thirst for knowledge.", traits: ["Analytical", "Original", "Curious"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/intp-logician-female.svg" },
+      ENTJ: { name: "The Commander", role: "Analyst", desc: "Bold, imaginative and strong-willed leaders, always finding a way.", traits: ["Confident", "Strategic", "Decisive"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/entj-commander-female.svg" },
+      ENTP: { name: "The Debater", role: "Analyst", desc: "Smart and curious thinkers who cannot resist an intellectual challenge.", traits: ["Innovative", "Curious", "Versatile"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/entp-debater-male.svg" },
+      INFJ: { name: "The Advocate", role: "Diplomat", desc: "Quiet and mystical, yet very inspiring and tireless idealists.", traits: ["Idealistic", "Empathetic", "Determined"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-female.svg" },
+      INFP: { name: "The Mediator", role: "Diplomat", desc: "Poetic, kind and altruistic people, always eager to help a good cause.", traits: ["Idealistic", "Empathetic", "Creative"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/infp-mediator-male.svg" },
+      ENFJ: { name: "The Protagonist", role: "Diplomat", desc: "Charismatic and inspiring leaders, able to mesmerize their listeners.", traits: ["Charismatic", "Reliable", "Leader"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/enfj-protagonist-male.svg" },
+      ENFP: { name: "The Campaigner", role: "Diplomat", desc: "Enthusiastic, creative and sociable free spirits.", traits: ["Enthusiastic", "Creative", "Sociable"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/enfp-campaigner-male.svg" },
+      ISTJ: { name: "The Logistician", role: "Sentinel", desc: "Practical and fact-minded individuals, whose reliability cannot be doubted.", traits: ["Practical", "Dependable", "Organized"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/istj-logistician-male.svg" },
+      ISFJ: { name: "The Defender", role: "Sentinel", desc: "Very dedicated and warm protectors, always ready to defend their loved ones.", traits: ["Warm", "Protective", "Reliable"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/isfj-defender-female.svg" },
+      ESTJ: { name: "The Executive", role: "Sentinel", desc: "Excellent administrators, unsurpassed at managing things or people.", traits: ["Organized", "Leader", "Dedicated"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/estj-executive-male.svg" },
+      ESFJ: { name: "The Consul", role: "Sentinel", desc: "Extraordinarily caring, social and popular people, always eager to help.", traits: ["Caring", "Social", "Harmony"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/esfj-consul-female.svg" },
+      ISTP: { name: "The Virtuoso", role: "Explorer", desc: "Bold and practical experimenters, masters of all kinds of tools.", traits: ["Bold", "Practical", "Resourceful"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/istp-virtuoso-male.svg" },
+      ISFP: { name: "The Adventurer", role: "Explorer", desc: "Flexible and charming artists, always ready to explore something new.", traits: ["Flexible", "Charming", "Artistic"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/isfp-adventurer-female.svg" },
+      ESTP: { name: "The Entrepreneur", role: "Explorer", desc: "Smart, energetic and very perceptive people, who enjoy living on the edge.", traits: ["Energetic", "Perceptive", "Bold"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/estp-entrepreneur-male.svg" },
+      ESFP: { name: "The Entertainer", role: "Explorer", desc: "Spontaneous, energetic and enthusiastic people.", traits: ["Spontaneous", "Energetic", "Enthusiastic"], avatar: "https://www.16personalities.com/static/images/personality-types/avatars/esfp-entertainer-male.svg" }
+    };
 
     const SUPABASE_URL = window.SUPABASE_URL;
     const SUPABASE_KEY = window.SUPABASE_KEY;
@@ -408,6 +551,8 @@
         el.textContent = type;
         el.style.left = `${x}px`;
         el.style.top = `${y}px`;
+        el.style.color = MBTI_COLORS[type];
+        el.style.textShadow = `0 0 10px ${MBTI_COLORS[type]}80`;
         ring.appendChild(el);
       });
     }
@@ -496,7 +641,10 @@
 
       countdownInterval = setInterval(() => {
         countdown--;
-        if (countdown < 0) countdown = 10;
+        if (countdown < 0) {
+          showMBTIResult();
+          countdown = 10;
+        }
         updateCountdownUI();
       }, 1000);
     }
@@ -509,10 +657,39 @@
     function updateCountdownUI() {
       const num = document.getElementById("countdownNumber");
       const circle = document.getElementById("countdownCircle");
-      num.textContent = countdown;
+      num.textContent = countdown < 0 ? 0 : countdown;
 
-      const offset = CIRCUMFERENCE * (1 - countdown / 10);
+      const offset = CIRCUMFERENCE * (1 - Math.max(countdown, 0) / 10);
       circle.style.strokeDashoffset = offset;
+    }
+
+    function showMBTIResult() {
+      const randomType = MBTI_TYPES[Math.floor(Math.random() * MBTI_TYPES.length)];
+      const data = MBTI_DATA[randomType];
+      const color = MBTI_COLORS[randomType];
+
+      document.getElementById("resultType").textContent = randomType;
+      document.getElementById("resultType").style.color = color;
+      document.getElementById("resultName").textContent = data.name;
+      document.getElementById("resultRole").textContent = data.role;
+      document.getElementById("resultRole").style.color = color;
+      document.getElementById("resultDesc").textContent = data.desc;
+      document.getElementById("resultAvatarImg").src = data.avatar;
+      document.getElementById("resultAvatar").style.borderColor = color;
+      document.getElementById("resultAvatar").style.color = color;
+
+      const traitsEl = document.getElementById("resultTraits");
+      traitsEl.innerHTML = data.traits.map(t =>
+        `<span style="color: ${color}; border-color: ${color}40; background: ${color}15">${t}</span>`
+      ).join("");
+
+      stopRouletteAnimation();
+      document.getElementById("mbtiResult").classList.add("show");
+
+      setTimeout(() => {
+        document.getElementById("mbtiResult").classList.remove("show");
+        startRouletteAnimation();
+      }, 5000);
     }
 
     // ===== CAPTURE =====
