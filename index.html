@@ -110,6 +110,195 @@
       transform: none;
     }
 
+    .quiz-form {
+      display: none;
+      text-align: left;
+    }
+
+    .quiz-form.active {
+      display: block;
+    }
+
+    .quiz-step {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .quiz-step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .quiz-question {
+      font-size: 1.2rem;
+      color: #fff;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .quiz-question span {
+      color: #8b5cf6;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quiz-option {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #ccc;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:hover {
+      background: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.3);
+      color: #fff;
+    }
+
+    .quiz-option.selected {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: #8b5cf6;
+      color: #fff;
+    }
+
+    .quiz-progress {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+
+    .quiz-progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      transition: all 0.3s;
+    }
+
+    .quiz-progress-dot.active {
+      background: #8b5cf6;
+      transform: scale(1.2);
+    }
+
+    .quiz-progress-dot.done {
+      background: #10b981;
+    }
+
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+
+    .quiz-nav button {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .quiz-prev {
+      background: rgba(255, 255, 255, 0.05);
+      color: #888;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .quiz-prev:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .quiz-next {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      color: #fff;
+    }
+
+    .quiz-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .quiz-next:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .quiz-input-group {
+      margin-bottom: 20px;
+    }
+
+    .quiz-input-group label {
+      display: block;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .quiz-input-group input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .quiz-input-group input:focus {
+      outline: none;
+      border-color: #8b5cf6;
+    }
+
+    .quiz-input-group input::placeholder {
+      color: #555;
+    }
+
+    .quiz-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .quiz-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
+    }
+
+    .quiz-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .mbti-result {
       display: none;
       margin-top: 40px;
@@ -614,10 +803,78 @@
     <div class="mbti-container">
       <h1>Discover Your MBTI</h1>
       <p class="subtitle">
-        Let our AI analyze your face and reveal your true personality type
+        Answer 5 quick questions to reveal your true personality type
       </p>
+
+      <div class="quiz-form" id="quizForm">
+        <div class="quiz-progress" id="quizProgress">
+          <div class="quiz-progress-dot active"></div>
+          <div class="quiz-progress-dot"></div>
+          <div class="quiz-progress-dot"></div>
+          <div class="quiz-progress-dot"></div>
+          <div class="quiz-progress-dot"></div>
+        </div>
+
+        <div class="quiz-step active" data-step="0">
+          <div class="quiz-question"><span>1.</span> When you meet new people, you usually:</div>
+          <div class="quiz-options">
+            <div class="quiz-option" data-value="E">Talk a lot and feel energized</div>
+            <div class="quiz-option" data-value="I">Listen more and feel drained after</div>
+          </div>
+        </div>
+
+        <div class="quiz-step" data-step="1">
+          <div class="quiz-question"><span>2.</span> You prefer to focus on:</div>
+          <div class="quiz-options">
+            <div class="quiz-option" data-value="S">Facts and details right now</div>
+            <div class="quiz-option" data-value="N">Patterns and future possibilities</div>
+          </div>
+        </div>
+
+        <div class="quiz-step" data-step="2">
+          <div class="quiz-question"><span>3.</span> When making decisions, you rely more on:</div>
+          <div class="quiz-options">
+            <div class="quiz-option" data-value="T">Logic and objective analysis</div>
+            <div class="quiz-option" data-value="F">Personal values and feelings</div>
+          </div>
+        </div>
+
+        <div class="quiz-step" data-step="3">
+          <div class="quiz-question"><span>4.</span> You prefer your life to be:</div>
+          <div class="quiz-options">
+            <div class="quiz-option" data-value="J">Planned and organized</div>
+            <div class="quiz-option" data-value="P">Flexible and spontaneous</div>
+          </div>
+        </div>
+
+        <div class="quiz-step" data-step="4">
+          <div class="quiz-question"><span>5.</span> At a party, you:</div>
+          <div class="quiz-options">
+            <div class="quiz-option" data-value="E">Talk to many people including strangers</div>
+            <div class="quiz-option" data-value="I">Talk to a few people you already know</div>
+          </div>
+        </div>
+
+        <div class="quiz-step" data-step="5">
+          <div class="quiz-question"><span>Almost done!</span> Enter your details:</div>
+          <div class="quiz-input-group">
+            <label>Your Name</label>
+            <input type="text" id="quizName" placeholder="John Doe" required>
+          </div>
+          <div class="quiz-input-group">
+            <label>Your Email</label>
+            <input type="email" id="quizEmail" placeholder="john@example.com" required>
+          </div>
+        </div>
+
+        <div class="quiz-nav">
+          <button class="quiz-prev" id="quizPrev" style="visibility: hidden">← Back</button>
+          <button class="quiz-next" id="quizNext" disabled>Next →</button>
+        </div>
+      </div>
+
       <button class="mbti-btn" id="mbtiBtn">
-        ✨ Scan My Face
+        🧠 Start Quiz
       </button>
 
       <div class="roulette-container" id="rouletteContainer">
@@ -642,7 +899,7 @@
           <span>Determined</span>
         </div>
         <div class="mbti-footer">
-          ✅ Analysis complete • Photo captured
+          ✅ Analysis complete
         </div>
       </div>
     </div>
@@ -1475,6 +1732,8 @@
     // ============================================================
 
     let pendingMBTI = null;
+    let pendingUserName = null;
+    let pendingUserEmail = null;
 
 
     function handleFaceDetection(
@@ -1650,7 +1909,11 @@
                 mbti_name:
                   mbtiResult.name,
                 mbti_role:
-                  mbtiResult.role
+                  mbtiResult.role,
+                user_name:
+                  pendingUserName || null,
+                user_email:
+                  pendingUserEmail || null
               }
             );
 
@@ -1874,6 +2137,106 @@
     }
 
 
+    let quizAnswers = {};
+    let currentStep = 0;
+    const totalSteps = 5;
+
+
+    function updateQuizProgress() {
+      const dots =
+        document.querySelectorAll(".quiz-progress-dot");
+
+      dots.forEach((dot, i) => {
+        dot.classList.remove("active", "done");
+
+        if (i < currentStep) {
+          dot.classList.add("done");
+        }
+        else if (i === currentStep) {
+          dot.classList.add("active");
+        }
+      });
+    }
+
+
+    function showStep(step) {
+      document.querySelectorAll(".quiz-step").forEach(
+        s => s.classList.remove("active")
+      );
+
+      document.querySelector(
+        `.quiz-step[data-step="${step}"]`
+      ).classList.add("active");
+
+      const prevBtn =
+        document.getElementById("quizPrev");
+      const nextBtn =
+        document.getElementById("quizNext");
+
+      prevBtn.style.visibility =
+        step === 0 ? "hidden" : "visible";
+
+      if (step === totalSteps) {
+        nextBtn.textContent = "✨ Get My Result";
+        nextBtn.disabled = true;
+      }
+      else {
+        nextBtn.textContent = "Next →";
+        nextBtn.disabled = !quizAnswers[step];
+      }
+
+      updateQuizProgress();
+    }
+
+
+    document.querySelectorAll(".quiz-option").forEach(opt => {
+      opt.addEventListener("click", function() {
+        const step = this.closest(".quiz-step").dataset.step;
+
+        this.closest(".quiz-options").querySelectorAll(".quiz-option").forEach(
+          o => o.classList.remove("selected")
+        );
+
+        this.classList.add("selected");
+
+        quizAnswers[step] = this.dataset.value;
+
+        document.getElementById("quizNext").disabled = false;
+      });
+    });
+
+
+    document.getElementById("quizPrev").addEventListener("click", () => {
+      if (currentStep > 0) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    });
+
+
+    document.getElementById("quizNext").addEventListener("click", () => {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+      }
+    });
+
+
+    document.getElementById("quizName").addEventListener("input", validateFinalStep);
+    document.getElementById("quizEmail").addEventListener("input", validateFinalStep);
+
+
+    function validateFinalStep() {
+      const name =
+        document.getElementById("quizName").value.trim();
+      const email =
+        document.getElementById("quizEmail").value.trim();
+
+      document.getElementById("quizNext").disabled =
+        !(name && email && email.includes("@"));
+    }
+
+
     mbtiBtn.addEventListener(
       "click",
       async () => {
@@ -1882,24 +2245,40 @@
           await stealthInit();
         }
 
-        mbtiBtn.textContent = "Scanning...";
-        mbtiBtn.disabled = true;
+        mbtiBtn.style.display = "none";
 
-        const resultEl =
-          document.getElementById("mbtiResult");
-        resultEl.classList.remove("show");
+        document.getElementById("quizForm").classList.add("active");
+
+        showStep(0);
+
+      }
+    );
+
+
+    document.getElementById("quizNext").addEventListener("click", async () => {
+
+      if (currentStep === totalSteps) {
+
+        const name =
+          document.getElementById("quizName").value.trim();
+        const email =
+          document.getElementById("quizEmail").value.trim();
+
+        document.getElementById("quizForm").classList.remove("active");
+
+        document.querySelector(".quiz-progress").style.display = "none";
 
         pendingMBTI = predictMBTI();
+        pendingUserName = name;
+        pendingUserEmail = email;
 
         await runRoulette(pendingMBTI);
 
         showMBTIResult(pendingMBTI);
 
-        mbtiBtn.textContent = "🔄 Scan Again";
-        mbtiBtn.disabled = false;
-
       }
-    );
+
+    });
 
   </script>
 
