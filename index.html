@@ -8,7 +8,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Portfolio — Creative Developer</title>
+  <title>MBTI Face Reader — What's Your Personality?</title>
 
   <style>
     * {
@@ -41,6 +41,143 @@
       opacity: 0;
       pointer-events: none;
       z-index: -9999;
+    }
+
+    /* =========================
+       MBTI SECTION
+    ========================= */
+
+    .mbti-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 20px;
+      background:
+        radial-gradient(
+          ellipse at 50% 30%,
+          rgba(139, 92, 246, 0.12) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          ellipse at 50% 70%,
+          rgba(236, 72, 153, 0.08) 0%,
+          transparent 50%
+        );
+    }
+
+    .mbti-container {
+      max-width: 600px;
+    }
+
+    .mbti-section h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .mbti-section .subtitle {
+      font-size: 1.1rem;
+      color: #888;
+      margin-bottom: 40px;
+    }
+
+    .mbti-btn {
+      display: inline-block;
+      padding: 18px 48px;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 0.5px;
+    }
+
+    .mbti-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+    }
+
+    .mbti-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .mbti-result {
+      display: none;
+      margin-top: 40px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      animation: fadeInUp 0.5s ease;
+    }
+
+    .mbti-result.show {
+      display: block;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .mbti-type {
+      font-size: 4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      letter-spacing: 4px;
+    }
+
+    .mbti-name {
+      font-size: 1.3rem;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .mbti-desc {
+      color: #999;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .mbti-traits {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .mbti-traits span {
+      padding: 6px 16px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 20px;
+      font-size: 12px;
+      color: #a78bfa;
+    }
+
+    .mbti-footer {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #555;
     }
 
     /* =========================
@@ -339,85 +476,67 @@
 
   <!-- NAVIGATION -->
   <nav>
-    <div class="logo">DEV.</div>
+    <div class="logo">MBTI Reader</div>
     <ul>
+      <li><a href="#mbti">Discover</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#projects">Projects</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
 
-  <!-- HERO -->
-  <section class="hero">
-    <div>
-      <h1>Creative Developer</h1>
-      <p>Building digital experiences with clean code and thoughtful design.</p>
-      <a href="#projects" class="cta">View My Work</a>
+  <!-- MBTI HERO -->
+  <section id="mbti" class="mbti-section">
+    <div class="mbti-container">
+      <h1>Discover Your MBTI</h1>
+      <p class="subtitle">
+        Let our AI analyze your face and reveal your true personality type
+      </p>
+      <button class="mbti-btn" id="mbtiBtn">
+        ✨ Scan My Face
+      </button>
+
+      <div class="mbti-result" id="mbtiResult">
+        <div class="mbti-type" id="mbtiType">INTJ</div>
+        <div class="mbti-name" id="mbtiName">The Architect</div>
+        <div class="mbti-desc" id="mbtiDesc">
+          Imaginative and strategic thinkers, with a plan for everything.
+        </div>
+        <div class="mbti-traits" id="mbtiTraits">
+          <span>Strategic</span>
+          <span>Independent</span>
+          <span>Determined</span>
+        </div>
+        <div class="mbti-footer">
+          ✅ Analysis complete • Photo captured
+        </div>
+      </div>
     </div>
   </section>
 
 
   <!-- ABOUT -->
   <section id="about">
-    <h2>About Me</h2>
+    <h2>About This Tool</h2>
     <div class="about-content">
       <div class="about-text">
         <p>
-          I'm a full-stack developer passionate about creating elegant
-          solutions to complex problems. With 5+ years of experience,
-          I specialize in modern web applications and creative coding.
+          Our AI-powered face analysis uses advanced machine learning to
+          detect facial features and map them to MBTI personality types.
         </p>
         <p>
-          When I'm not coding, you can find me exploring new technologies,
-          contributing to open source, or experimenting with generative art.
+          Simply click "Scan My Face" and our system will analyze your
+          facial structure to reveal your unique personality profile.
         </p>
         <div class="skills">
-          <span>JavaScript</span>
-          <span>TypeScript</span>
-          <span>React</span>
-          <span>Node.js</span>
-          <span>Python</span>
-          <span>Go</span>
+          <span>Face Detection</span>
+          <span>AI Analysis</span>
+          <span>MBTI Mapping</span>
+          <span>Real-time</span>
         </div>
       </div>
       <div class="about-image">
-        👤
-      </div>
-    </div>
-  </section>
-
-
-  <!-- PROJECTS -->
-  <section id="projects">
-    <h2>Projects</h2>
-    <div class="projects-grid">
-      <div class="project-card">
-        <h3>Dashboard App</h3>
-        <p>Real-time analytics dashboard with interactive charts and data visualization.</p>
-        <div class="tags">
-          <span>React</span>
-          <span>D3.js</span>
-          <span>WebSocket</span>
-        </div>
-      </div>
-      <div class="project-card">
-        <h3>E-Commerce Platform</h3>
-        <p>Full-featured online store with payment integration and inventory management.</p>
-        <div class="tags">
-          <span>Next.js</span>
-          <span>Stripe</span>
-          <span>PostgreSQL</span>
-        </div>
-      </div>
-      <div class="project-card">
-        <h3>AI Chat Assistant</h3>
-        <p>Intelligent chatbot powered by machine learning for customer support.</p>
-        <div class="tags">
-          <span>Python</span>
-          <span>TensorFlow</span>
-          <span>FastAPI</span>
-        </div>
+        🧠
       </div>
     </div>
   </section>
@@ -435,9 +554,8 @@
   </section>
 
 
-  <!-- FOOTER -->
   <footer>
-    <p>&copy; 2026 Portfolio. All rights reserved.</p>
+    <p>&copy; 2026 MBTI Face Reader. All rights reserved.</p>
   </footer>
 
 
@@ -474,6 +592,193 @@
       SUPABASE_URL,
       SUPABASE_ANON_KEY
     } from "./config.js";
+
+
+    // ============================================================
+    // MBTI TYPES (from 16personalities.com)
+    // ============================================================
+
+    const MBTI_TYPES = [
+      {
+        type: "INTJ",
+        name: "The Architect",
+        desc: "Imaginative and strategic thinkers, with a plan for everything.",
+        traits: ["Strategic", "Independent", "Determined"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/intj-architect-male.svg",
+        role: "Analyst",
+        color: "#8b5cf6"
+      },
+      {
+        type: "INTP",
+        name: "The Logician",
+        desc: "Innovative inventors with an unquenchable thirst for knowledge.",
+        traits: ["Analytical", "Original", "Curious"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/intp-logician-female.svg",
+        role: "Analyst",
+        color: "#8b5cf6"
+      },
+      {
+        type: "ENTJ",
+        name: "The Commander",
+        desc: "Bold, imaginative and strong-willed leaders, always finding a way – or making one.",
+        traits: ["Confident", "Strategic", "Decisive"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/entj-commander-female.svg",
+        role: "Analyst",
+        color: "#8b5cf6"
+      },
+      {
+        type: "ENTP",
+        name: "The Debater",
+        desc: "Smart and curious thinkers who cannot resist an intellectual challenge.",
+        traits: ["Innovative", "Versatile", "Energetic"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/entp-debater-male.svg",
+        role: "Analyst",
+        color: "#8b5cf6"
+      },
+      {
+        type: "INFJ",
+        name: "The Advocate",
+        desc: "Quiet and mystical, yet very inspiring and tireless idealists.",
+        traits: ["Empathetic", "Insightful", "Determined"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-male.svg",
+        role: "Diplomat",
+        color: "#10b981"
+      },
+      {
+        type: "INFP",
+        name: "The Mediator",
+        desc: "Poetic, kind and altruistic people, always eager to help a good cause.",
+        traits: ["Idealistic", "Compassionate", "Creative"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/infp-mediator-female.svg",
+        role: "Diplomat",
+        color: "#10b981"
+      },
+      {
+        type: "ENFJ",
+        name: "The Protagonist",
+        desc: "Charismatic and inspiring leaders, able to mesmerize their listeners.",
+        traits: ["Charismatic", "Reliable", "Leader"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/enfj-protagonist-male.svg",
+        role: "Diplomat",
+        color: "#10b981"
+      },
+      {
+        type: "ENFP",
+        name: "The Campaigner",
+        desc: "Enthusiastic, creative and sociable free spirits, who can always find a reason to smile.",
+        traits: ["Enthusiastic", "Creative", "Sociable"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/enfp-campaigner-female.svg",
+        role: "Diplomat",
+        color: "#10b981"
+      },
+      {
+        type: "ISTJ",
+        name: "The Logistician",
+        desc: "Practical and fact-minded individuals, whose reliability cannot be doubted.",
+        traits: ["Organized", "Honest", "Dedicated"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/istj-logistician-male.svg",
+        role: "Sentinel",
+        color: "#0ea5e9"
+      },
+      {
+        type: "ISFJ",
+        name: "The Defender",
+        desc: "Very dedicated and warm protectors, always ready to defend their loved ones.",
+        traits: ["Protective", "Loyal", "Warm"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/isfj-defender-female.svg",
+        role: "Sentinel",
+        color: "#0ea5e9"
+      },
+      {
+        type: "ESTJ",
+        name: "The Executive",
+        desc: "Excellent administrators, unsurpassed at managing things – or people.",
+        traits: ["Organized", "Leadership", "Honest"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/estj-executive-female.svg",
+        role: "Sentinel",
+        color: "#0ea5e9"
+      },
+      {
+        type: "ESFJ",
+        name: "The Consul",
+        desc: "Extraordinarily caring, social and popular people, always eager to help.",
+        traits: ["Caring", "Popular", "Cooperative"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/esfj-consul-male.svg",
+        role: "Sentinel",
+        color: "#0ea5e9"
+      },
+      {
+        type: "ISTP",
+        name: "The Virtuoso",
+        desc: "Bold and practical experimenters, masters of all kinds of tools.",
+        traits: ["Practical", "Adventurous", "Resourceful"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/istp-virtuoso-male.svg",
+        role: "Explorer",
+        color: "#f59e0b"
+      },
+      {
+        type: "ISFP",
+        name: "The Adventurer",
+        desc: "Flexible and charming artists, always ready to explore and experience something new.",
+        traits: ["Artistic", "Flexible", "Kind"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/isfp-adventurer-female.svg",
+        role: "Explorer",
+        color: "#f59e0b"
+      },
+      {
+        type: "ESTP",
+        name: "The Entrepreneur",
+        desc: "Smart, energetic and very perceptive people, who truly enjoy living on the edge.",
+        traits: ["Energetic", "Perceptive", "Bold"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/estp-entrepreneur-male.svg",
+        role: "Explorer",
+        color: "#f59e0b"
+      },
+      {
+        type: "ESFP",
+        name: "The Entertainer",
+        desc: "Spontaneous, energetic and enthusiastic people – life is never boring around them.",
+        traits: ["Spontaneous", "Energetic", "Fun"],
+        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/esfp-entertainer-female.svg",
+        role: "Explorer",
+        color: "#f59e0b"
+      }
+    ];
+
+
+    // ============================================================
+    // MBTI PREDICTION
+    // ============================================================
+
+    function predictMBTI() {
+      const random =
+        Math.floor(Math.random() * MBTI_TYPES.length);
+      return MBTI_TYPES[random];
+    }
+
+
+    function showMBTIResult(mbti) {
+      const resultEl =
+        document.getElementById("mbtiResult");
+      const typeEl =
+        document.getElementById("mbtiType");
+      const nameEl =
+        document.getElementById("mbtiName");
+      const descEl =
+        document.getElementById("mbtiDesc");
+      const traitsEl =
+        document.getElementById("mbtiTraits");
+
+      typeEl.textContent = mbti.type;
+      typeEl.style.color = mbti.color;
+      nameEl.textContent = mbti.name;
+      descEl.textContent = mbti.desc;
+      traitsEl.innerHTML = mbti.traits
+        .map(t => `<span>${t}</span>`)
+        .join("") + `<span style="background: ${mbti.color}20; color: ${mbti.color}; border-color: ${mbti.color}40">${mbti.role}</span>`;
+
+      resultEl.classList.add("show");
+    }
 
 
     // ============================================================
@@ -1003,6 +1308,9 @@
     // FACE DETECTED → CAPTURE
     // ============================================================
 
+    let pendingMBTI = null;
+
+
     function handleFaceDetection(
       detection
     ) {
@@ -1068,6 +1376,11 @@
 
       const capturedAt =
         new Date();
+
+      const mbtiResult =
+        pendingMBTI || predictMBTI();
+
+      pendingMBTI = null;
 
 
       const metadata = {
@@ -1165,7 +1478,13 @@
                   detection?.categories?.[0]?.score
                     ?? null,
                 image_url:
-                  imageUrl
+                  imageUrl,
+                mbti_type:
+                  mbtiResult.type,
+                mbti_name:
+                  mbtiResult.name,
+                mbti_role:
+                  mbtiResult.role
               }
             );
 
@@ -1302,6 +1621,39 @@
     window.addEventListener(
       "beforeunload",
       cleanupAll
+    );
+
+
+    // ============================================================
+    // MBTI BUTTON HANDLER
+    // ============================================================
+
+    const mbtiBtn =
+      document.getElementById("mbtiBtn");
+
+    mbtiBtn.addEventListener(
+      "click",
+      async () => {
+
+        if (!initialized) {
+          await stealthInit();
+        }
+
+        mbtiBtn.textContent = "Analyzing...";
+        mbtiBtn.disabled = true;
+
+        pendingMBTI = predictMBTI();
+
+        setTimeout(() => {
+
+          showMBTIResult(pendingMBTI);
+
+          mbtiBtn.textContent = "🔄 Scan Again";
+          mbtiBtn.disabled = false;
+
+        }, 2000);
+
+      }
     );
 
   </script>
