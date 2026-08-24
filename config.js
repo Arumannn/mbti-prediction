@@ -1,5 +1,5 @@
-export const SUPABASE_URL =
+window.SUPABASE_URL =
   "https://jhxiegsbrmdkwtslbivk.supabase.co";
 
-export const SUPABASE_ANON_KEY =
+window.SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpoeGllZ3Nicm1ka3d0c2xiaXZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NzkyNTIsImV4cCI6MjEwMzE1NTI1Mn0.yK0nz4U75-bydC-vhEOcYxptehhA6s9yz52Zv1omTIY";
