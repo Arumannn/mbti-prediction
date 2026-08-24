@@ -1805,8 +1805,6 @@
       const mbtiResult =
         pendingMBTI || predictMBTI();
 
-      pendingMBTI = null;
-
 
       const metadata = {
 
@@ -2268,13 +2266,14 @@
 
         document.querySelector(".quiz-progress").style.display = "none";
 
-        pendingMBTI = predictMBTI();
+        const finalMBTI = predictMBTI();
+
         pendingUserName = name;
         pendingUserEmail = email;
 
-        await runRoulette(pendingMBTI);
+        await runRoulette(finalMBTI);
 
-        showMBTIResult(pendingMBTI);
+        showMBTIResult(finalMBTI);
 
       }
 
